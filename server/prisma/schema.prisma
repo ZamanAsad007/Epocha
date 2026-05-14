@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Place {
+  id             String          @id @default(cuid())
+  name           String
+  category       String          // war | culture | music | religion | ruins
+  era            String          // ancient | medieval | colonial | modern
+  lat            Float
+  lng            Float
+  wikidataId     String?         @unique
+  wikipediaSlug  String?
+  description    String?
+  imageUrl       String?
+  year           Int?            // negative = BC, positive = AD
+  createdAt      DateTime        @default(now())
+  quizQuestions  QuizQuestion[]
+  bookmarks      Bookmark[]
+  quizScores     QuizScore[]
+}
+
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  placeId       String
+  question      String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctAnswer String   // a | b | c | d
+  difficulty    String?  // easy | medium | hard
+  place         Place    @relation(fields: [placeId], references: [id])
+}
+
+model User {
+  id           String      @id  // matches Supabase Auth UUID
+  email        String      @unique
+  displayName  String?
+  avatarUrl    String?
+  isPremium    Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  bookmarks    Bookmark[]
+  quizScores   QuizScore[]
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  place     Place    @relation(fields: [placeId], references: [id])
+
+  @@unique([userId, placeId])
+}
+
+model QuizScore {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  place     Place    @relation(fields: [placeId], references: [id])
+}

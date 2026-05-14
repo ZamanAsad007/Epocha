@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useMapStore from '../../store/mapStore';
 import PlaceDetail from './PlaceDetail';
+import QuizPanel from './QuizPanel';
 
 const Sidebar = () => {
   const { selectedPlace, clearSelectedPlace } = useMapStore();
+  const [view, setView] = useState('detail'); // 'detail' or 'quiz'
+
+  // Reset view when selected place changes
+  useEffect(() => {
+    setView('detail');
+  }, [selectedPlace?.id]);
 
   return (
     <div className={`
@@ -15,7 +22,9 @@ const Sidebar = () => {
       max-sm:inset-x-0 max-sm:top-auto max-sm:bottom-0 max-sm:h-[80vh] max-sm:rounded-t-3xl max-sm:border-t max-sm:border-l-0
     `}>
       <div className="sticky top-0 z-10 flex items-center justify-between p-5 bg-background-panel/90 backdrop-blur-md border-b border-border">
-        <h2 className="text-xl font-display font-bold tracking-widest text-primary uppercase">{selectedPlace ? 'Archival Details' : ''}</h2>
+        <h2 className="text-xl font-display font-bold tracking-widest text-primary uppercase">
+          {selectedPlace ? (view === 'detail' ? 'Archival Details' : 'Knowledge Trial') : ''}
+        </h2>
         <button
           onClick={clearSelectedPlace}
           className="p-2 rounded-full hover:bg-background-card text-text-muted transition-colors border border-transparent hover:border-border"
@@ -27,7 +36,13 @@ const Sidebar = () => {
       </div>
       
       <div className="p-6">
-        {selectedPlace && <PlaceDetail place={selectedPlace} />}
+        {selectedPlace && (
+          view === 'detail' ? (
+            <PlaceDetail place={selectedPlace} onStartQuiz={() => setView('quiz')} />
+          ) : (
+            <QuizPanel placeId={selectedPlace.id} onBack={() => setView('detail')} />
+          )
+        )}
       </div>
     </div>
   );

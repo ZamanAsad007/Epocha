@@ -3,7 +3,7 @@ import useWikipedia from '../../hooks/useWikipedia';
 import { categoryConfig } from '../../utils/categoryConfig';
 import LoadingSpinner from '../UI/LoadingSpinner';
 
-const PlaceDetail = ({ place }) => {
+const PlaceDetail = ({ place, onStartQuiz }) => {
   const { title, description, extract, thumbnail, loading, error } = useWikipedia(place.wikipedia_slug);
   const config = categoryConfig[place.category];
 
@@ -11,7 +11,7 @@ const PlaceDetail = ({ place }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header Info */}
+      {/* ... (Header, Image, Content) ... */}
       <div className="border-b border-border pb-6">
         <div className="flex items-center gap-3 mb-3">
           <span className="text-2xl opacity-90 grayscale-[0.5]">{config?.icon}</span>
@@ -30,7 +30,6 @@ const PlaceDetail = ({ place }) => {
         </div>
       </div>
 
-      {/* Image */}
       <div className="aspect-[16/10] w-full rounded-lg overflow-hidden bg-background-card border border-border relative shadow-inner">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -46,7 +45,6 @@ const PlaceDetail = ({ place }) => {
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-background-panel/40 to-transparent"></div>
       </div>
 
-      {/* Wikipedia Content */}
       <div className="space-y-5">
         {loading ? (
           <div className="space-y-3">
@@ -68,18 +66,20 @@ const PlaceDetail = ({ place }) => {
         )}
       </div>
 
-      {/* Action Buttons (Stubbed) */}
       <div className="grid grid-cols-2 gap-3 pt-8 border-t border-border">
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
-          <span className="opacity-60 text-sm">📝</span> Quiz
+        <button 
+          onClick={onStartQuiz}
+          className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-primary"
+        >
+          <span className="opacity-60 text-sm">📝</span> Take Quiz
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">
           <span className="opacity-60 text-sm">📊</span> Stats
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">
           <span className="opacity-60 text-sm">🔖</span> Save
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">
           <span className="opacity-60 text-sm">🔗</span> Share
         </button>
       </div>
