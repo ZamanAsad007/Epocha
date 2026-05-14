@@ -9,6 +9,8 @@ const useMapStore = create(
     activeFilters: ["war", "culture", "music", "religion", "ruins"],
     sliderYear: 1945,
     isGuest: true,
+    places: [],
+    user: null,
     // Actions
     setSelectedPlace: (place) => set({ selectedPlace: place }),
     toggleFilter: (category) =>
@@ -21,6 +23,8 @@ const useMapStore = create(
       }),
     setSliderYear: (year) => set({ sliderYear: year }),
     clearSelectedPlace: () => set({ selectedPlace: null }),
+    setPlaces: (places) => set({ places }),
+    setUser: (user) => set({ user, isGuest: !user }),
   }))
 );
 

@@ -13,7 +13,8 @@
     "react-leaflet": "^4.2.1",
     "leaflet": "^1.9.4",
     "zustand": "^4.4.0",
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "@supabase/supabase-js": "^2.39.7"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

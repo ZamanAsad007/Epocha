@@ -1,14 +1,16 @@
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { usePlaces } from '../../hooks/usePlaces';
 import useMapStore from '../../store/mapStore';
 import { categoryConfig } from '../../utils/categoryConfig';
 import MarkerPopup from './MarkerPopup';
 
 const MarkerLayer = () => {
-  const places = usePlaces();
-  const { selectedPlace, setSelectedPlace } = useMapStore();
+  const { places, activeFilters, selectedPlace, setSelectedPlace } = useMapStore();
+
+  const visiblePlaces = places.filter(place => 
+    activeFilters.includes(place.category)
+  );
 
   const markerColors = {
     war: '#C0392B',

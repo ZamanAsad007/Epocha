@@ -1,29 +1,73 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import useMapStore from '../../store/mapStore';
 import LockBadge from '../UI/LockBadge';
+import axios from 'axios';
+
+// Simple local debounce implementation
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
+const eraLabels = [
+  { max: 500, label: "Ancient World" },
+  { max: 1500, label: "Medieval Era" },
+  { max: 1900, label: "Colonial Era" },
+  { max: 2024, label: "Modern Era" },
+];
 
 const TimeSlider = () => {
-  const { sliderYear, setSliderYear, isGuest } = useMapStore();
+  const { sliderYear, setSliderYear, isGuest, setPlaces } = useMapStore();
+  const [localYear, setLocalYear] = useState(sliderYear);
+
+  const displayYear = localYear < 0 ? `${Math.abs(localYear)} BC` : `${localYear} AD`;
+  const currentEra = eraLabels.find(era => localYear < era.max)?.label || "Modern Era";
+
+  // Debounced API call to fetch places
+  const fetchPlacesByYear = useCallback(
+    debounce(async (year) => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/places?year=${year}`);
+        if (setPlaces) setPlaces(response.data);
+      } catch (error) {
+        console.error('Error fetching places:', error);
+      }
+    }, 400),
+    [setPlaces]
+  );
 
   const handleChange = (e) => {
-    if (!isGuest) {
-      setSliderYear(parseInt(e.target.value));
+    const val = parseInt(e.target.value);
+    
+    if (isGuest && val > 1945) {
+      setLocalYear(1945);
+      return;
     }
-  };
 
-  const displayYear = sliderYear < 0 ? `${Math.abs(sliderYear)} BC` : `${sliderYear} AD`;
+    setLocalYear(val);
+    setSliderYear(val);
+    fetchPlacesByYear(val);
+  };
 
   return (
     <div className="z-[1000] absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[500px]">
-      <div className="p-5 bg-background-panel/90 backdrop-blur-md rounded border border-border shadow-[0_0_40px_rgba(0,0,0,0.4)] space-y-5">
+      <div className="p-5 bg-background-panel/90 backdrop-blur-md rounded border border-border shadow-[0_0_40px_rgba(0,0,0,0.4)] space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-xl font-bold text-primary tracking-tighter">
-              {displayYear}
+          <div className="flex flex-col">
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-2xl font-bold text-primary tracking-tighter">
+                {displayYear}
+              </span>
+              {isGuest && <LockBadge />}
+            </div>
+            <span className="text-[10px] font-display text-text-muted uppercase tracking-[0.2em]">
+              {currentEra}
             </span>
-            {isGuest && <LockBadge />}
           </div>
-          <div className="text-[10px] uppercase tracking-[0.25em] text-text-muted font-bold font-sans">
+          <div className="text-[10px] uppercase tracking-[0.25em] text-text-muted font-bold font-sans text-right">
             Chronological Archive
           </div>
         </div>
@@ -33,9 +77,8 @@ const TimeSlider = () => {
             type="range"
             min="-3000"
             max="2024"
-            value={sliderYear}
+            value={localYear}
             onChange={handleChange}
-            disabled={isGuest}
             className={`
               w-full h-1 rounded-full appearance-none cursor-pointer
               ${isGuest ? 'bg-border' : 'bg-background-card accent-primary'}
