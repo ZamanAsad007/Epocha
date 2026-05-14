@@ -1,5 +1,6 @@
 import React from 'react';
-import { CircleMarker, Popup } from 'react-leaflet';
+import { Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
 import { usePlaces } from '../../hooks/usePlaces';
 import useMapStore from '../../store/mapStore';
 import { categoryConfig } from '../../utils/categoryConfig';
@@ -7,44 +8,57 @@ import MarkerPopup from './MarkerPopup';
 
 const MarkerLayer = () => {
   const places = usePlaces();
-  const setSelectedPlace = useMapStore((state) => state.setSelectedPlace);
+  const { selectedPlace, setSelectedPlace } = useMapStore();
+
+  const markerColors = {
+    war: '#C0392B',
+    culture: '#C9A84C',
+    music: '#7D5BA6',
+    religion: '#2980B9',
+    ruins: '#7F8C8D',
+  };
+
+  const createIcon = (category, isSelected) => {
+    const color = markerColors[category] || '#C9A84C';
+    const size = isSelected ? 22 : 14;
+    
+    return L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div class="relative group">
+          <div class="marker-base ${isSelected ? 'marker-pulse' : ''}" 
+               style="
+                 width: ${size}px; 
+                 height: ${size}px; 
+                 background-color: ${color}; 
+                 border: 2px solid ${color}88; 
+                 border-radius: 50%;
+                 box-shadow: 0 0 10px ${color}66;
+                 transition: all 0.3s ease-in-out;
+               ">
+          </div>
+        </div>
+      `,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
+  };
 
   return (
     <>
       {places.map((place) => {
-        const config = categoryConfig[place.category];
-        const color = config ? `var(--color-${place.category})` : '#ffffff';
-        
-        // Tailwind colors are defined in tailwind.config.cjs
-        // However, Leaflet needs hex or standard CSS colors.
-        // Let's use a small helper or just hardcode the HSL from the config for the markers.
-        const markerColors = {
-            war: 'hsl(0, 80%, 50%)',
-            culture: 'hsl(30, 80%, 50%)',
-            music: 'hsl(280, 80%, 50%)',
-            religion: 'hsl(210, 80%, 50%)',
-            ruins: 'hsl(0, 0%, 50%)',
-        };
-
+        const isSelected = selectedPlace?.id === place.id;
         return (
-          <CircleMarker
+          <Marker
             key={place.id}
-            center={[place.lat, place.lng]}
-            radius={8}
-            pathOptions={{
-              fillColor: markerColors[place.category] || '#ffffff',
-              fillOpacity: 0.8,
-              color: '#ffffff',
-              weight: 1,
-            }}
+            position={[place.lat, place.lng]}
+            icon={createIcon(place.category, isSelected)}
             eventHandlers={{
-              click: () => {
-                setSelectedPlace(place);
-              },
+              click: () => setSelectedPlace(place),
             }}
           >
             <MarkerPopup place={place} />
-          </CircleMarker>
+          </Marker>
         );
       })}
     </>

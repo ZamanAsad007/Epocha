@@ -8,7 +8,7 @@ import Sidebar from "./components/Sidebar/Sidebar";
 
 function App() {
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-900 text-white font-sans">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-text-primary font-sans">
       <Navbar />
       
       <main className="flex-1 relative overflow-hidden">
@@ -16,7 +16,10 @@ function App() {
         <MapView />
 
         {/* Overlays */}
-        <FilterBar />
+        <div className="absolute inset-x-0 top-0 z-[2500]">
+          <FilterBar />
+        </div>
+        
         <TimeSlider />
         <Sidebar />
       </main>

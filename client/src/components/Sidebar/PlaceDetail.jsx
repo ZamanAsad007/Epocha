@@ -12,55 +12,56 @@ const PlaceDetail = ({ place }) => {
   return (
     <div className="space-y-6">
       {/* Header Info */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-3xl">{config?.icon}</span>
-          <span className={`text-xs font-bold uppercase tracking-widest text-${config?.color}`}>
+      <div className="border-b border-border pb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-2xl opacity-90 grayscale-[0.5]">{config?.icon}</span>
+          <span className={`text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-${place.category}`}>
             {config?.label}
           </span>
         </div>
-        <h1 className="text-3xl font-black mb-1">{place.name}</h1>
-        <div className="flex gap-2">
-          <span className="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/10 uppercase">
+        <h1 className="text-4xl font-heading font-bold mb-3 text-text-primary leading-tight">{place.name}</h1>
+        <div className="flex gap-3">
+          <span className="px-3 py-1 rounded bg-background-card text-[11px] text-text-secondary border border-border uppercase tracking-widest">
             {place.era}
           </span>
-          <span className="px-2 py-1 rounded bg-white/5 text-xs text-gray-400 border border-white/10 uppercase font-mono">
+          <span className="px-3 py-1 rounded bg-background-card text-[11px] text-primary/80 border border-border uppercase font-mono tracking-tighter">
             {displayYear}
           </span>
         </div>
       </div>
 
       {/* Image */}
-      <div className="aspect-video w-full rounded-2xl overflow-hidden bg-white/5 border border-white/10 relative">
+      <div className="aspect-[16/10] w-full rounded-lg overflow-hidden bg-background-card border border-border relative shadow-inner">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <LoadingSpinner />
           </div>
         ) : thumbnail ? (
-          <img src={thumbnail} alt={place.name} className="w-full h-full object-cover" />
+          <img src={thumbnail} alt={place.name} className="w-full h-full object-cover opacity-90 transition-opacity hover:opacity-100" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-600 italic">
-            No image available
+          <div className="w-full h-full flex items-center justify-center text-text-muted italic text-sm font-serif">
+            No visual record found in archives
           </div>
         )}
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-background-panel/40 to-transparent"></div>
       </div>
 
       {/* Wikipedia Content */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {loading ? (
-          <div className="space-y-2">
-            <div className="h-4 bg-white/5 rounded w-3/4 animate-pulse"></div>
-            <div className="h-4 bg-white/5 rounded w-full animate-pulse"></div>
-            <div className="h-4 bg-white/5 rounded w-5/6 animate-pulse"></div>
+          <div className="space-y-3">
+            <div className="h-3 bg-background-card rounded w-3/4 animate-pulse"></div>
+            <div className="h-3 bg-background-card rounded w-full animate-pulse"></div>
+            <div className="h-3 bg-background-card rounded w-5/6 animate-pulse"></div>
           </div>
         ) : error ? (
-          <p className="text-red-400 text-sm">Failed to load description from Wikipedia.</p>
+          <p className="text-war text-sm font-serif italic">Communication with the global archives failed.</p>
         ) : (
           <>
-            <p className="text-lg font-medium text-gray-300 leading-tight">
+            <p className="text-xl font-heading font-medium text-text-primary leading-snug">
               {description}
             </p>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-[15px] font-sans text-text-secondary leading-relaxed font-light">
               {extract}
             </p>
           </>
@@ -68,18 +69,18 @@ const PlaceDetail = ({ place }) => {
       </div>
 
       {/* Action Buttons (Stubbed) */}
-      <div className="grid grid-cols-2 gap-3 pt-6 border-t border-white/5">
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium opacity-50 cursor-not-allowed">
-          <span>📝</span> Quiz
+      <div className="grid grid-cols-2 gap-3 pt-8 border-t border-border">
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+          <span className="opacity-60 text-sm">📝</span> Quiz
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium opacity-50 cursor-not-allowed">
-          <span>📊</span> Stats
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+          <span className="opacity-60 text-sm">📊</span> Stats
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium opacity-50 cursor-not-allowed">
-          <span>🔖</span> Save
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+          <span className="opacity-60 text-sm">🔖</span> Save
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium opacity-50 cursor-not-allowed">
-          <span>🔗</span> Share
+        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted">
+          <span className="opacity-60 text-sm">🔗</span> Share
         </button>
       </div>
     </div>
