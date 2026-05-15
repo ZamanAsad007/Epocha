@@ -29,6 +29,16 @@ app.get('/', (req, res) => {
 // Error handling
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+const supabase = require('./services/supabase');
+
+app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
+  
+  // Quick check to see if Supabase is reachable
+  const { error } = await supabase.from('places').select('id').limit(1);
+  if (error && error.message !== 'JSON object requested, but no data was returned') {
+    console.log('⚠️  Supabase Connection Error:', error.message);
+  } else {
+    console.log('✅ Supabase Connected Successfully');
+  }
 });

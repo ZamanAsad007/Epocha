@@ -33,6 +33,11 @@ router.get('/', async (req, res, next) => {
       total,
       byCategory,
       byEra,
+      recentlyAdded: await prisma.place.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, name: true, category: true }
+      }),
       mostViewed: [] // Phase 3 stub
     });
   } catch (error) {

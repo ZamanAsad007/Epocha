@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Place {
@@ -26,6 +27,8 @@ model Place {
   quizQuestions  QuizQuestion[]
   bookmarks      Bookmark[]
   quizScores     QuizScore[]
+
+  @@map("places")
 }
 
 model QuizQuestion {
@@ -39,10 +42,12 @@ model QuizQuestion {
   correctAnswer String   // a | b | c | d
   difficulty    String?  // easy | medium | hard
   place         Place    @relation(fields: [placeId], references: [id])
+
+  @@map("quiz_questions")
 }
 
 model User {
-  id           String      @id  // matches Supabase Auth UUID
+  id           String      @id @db.Uuid   // matches Supabase Auth UUID
   email        String      @unique
   displayName  String?
   avatarUrl    String?
@@ -50,6 +55,8 @@ model User {
   createdAt    DateTime    @default(now())
   bookmarks    Bookmark[]
   quizScores   QuizScore[]
+
+  @@map("users")
 }
 
 model Bookmark {
@@ -61,6 +68,7 @@ model Bookmark {
   place     Place    @relation(fields: [placeId], references: [id])
 
   @@unique([userId, placeId])
+  @@map("bookmarks")
 }
 
 model QuizScore {
@@ -72,4 +80,6 @@ model QuizScore {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
   place     Place    @relation(fields: [placeId], references: [id])
+
+  @@map("quiz_scores")
 }
