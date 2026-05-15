@@ -61,7 +61,7 @@ model User {
 
 model Bookmark {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @db.Uuid
   placeId   String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
@@ -73,7 +73,7 @@ model Bookmark {
 
 model QuizScore {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @db.Uuid
   placeId   String
   score     Int
   total     Int

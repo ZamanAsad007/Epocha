@@ -27,7 +27,10 @@ const FilterBar = () => {
               `}
             >
               {isActive && (
-                <span className={`w-2 h-2 rounded-full bg-current`}></span>
+                <span 
+                  className="w-2 h-2 rounded-full" 
+                  style={{ backgroundColor: config.hex }}
+                ></span>
               )}
               <span className="opacity-80">{config.icon}</span>
               <span className="font-medium tracking-tight uppercase text-[11px]">{config.label}</span>

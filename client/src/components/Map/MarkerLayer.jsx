@@ -4,24 +4,15 @@ import L from 'leaflet';
 import useMapStore from '../../store/mapStore';
 import { categoryConfig } from '../../utils/categoryConfig';
 import MarkerPopup from './MarkerPopup';
+import { usePlaces } from '../../hooks/usePlaces';
 
 const MarkerLayer = () => {
-  const { places, activeFilters, selectedPlace, setSelectedPlace } = useMapStore();
-
-  const visiblePlaces = places.filter(place => 
-    activeFilters.includes(place.category)
-  );
-
-  const markerColors = {
-    war: '#C0392B',
-    culture: '#C9A84C',
-    music: '#7D5BA6',
-    religion: '#2980B9',
-    ruins: '#7F8C8D',
-  };
+  const { selectedPlace, setSelectedPlace } = useMapStore();
+  const visiblePlaces = usePlaces();
 
   const createIcon = (category, isSelected) => {
-    const color = markerColors[category] || '#C9A84C';
+    const config = categoryConfig[category];
+    const color = config?.hex || '#C9A84C';
     const size = isSelected ? 22 : 14;
     
     return L.divIcon({
@@ -48,7 +39,7 @@ const MarkerLayer = () => {
 
   return (
     <>
-      {places.map((place) => {
+      {visiblePlaces.map((place) => {
         const isSelected = selectedPlace?.id === place.id;
         return (
           <Marker

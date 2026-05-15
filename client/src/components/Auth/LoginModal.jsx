@@ -25,7 +25,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToSignup }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[5000] flex items-start justify-center p-4 bg-background/90 backdrop-blur-md overflow-y-auto pt-20 md:items-center md:pt-4">
       <div className="w-full max-w-md bg-background-panel border border-border rounded-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="p-8 space-y-6">
           <div className="text-center space-y-2">

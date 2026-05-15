@@ -4,7 +4,8 @@ import { categoryConfig } from '../../utils/categoryConfig';
 import LoadingSpinner from '../UI/LoadingSpinner';
 
 const PlaceDetail = ({ place, onStartQuiz }) => {
-  const { title, description, extract, thumbnail, loading, error } = useWikipedia(place.wikipedia_slug);
+  const wikiSlug = place.wikipediaSlug || place.wikipedia_slug;
+  const { title, description, extract, thumbnail, loading, error } = useWikipedia(wikiSlug);
   const config = categoryConfig[place.category];
 
   const displayYear = place.year < 0 ? `${Math.abs(place.year)} BC` : `${place.year} AD`;

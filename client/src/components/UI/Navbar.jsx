@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import useMapStore from '../../store/mapStore';
 import useAuth from '../../hooks/useAuth';
-import LoginModal from '../Auth/LoginModal';
-import SignupModal from '../Auth/SignupModal';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const { user, isGuest } = useMapStore();
   const { logout } = useAuth();
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   return (
     <nav className="h-14 bg-background-panel border-b border-border px-6 flex items-center justify-between z-[4000] sticky top-0 backdrop-blur-md bg-opacity-95">
@@ -29,12 +26,12 @@ const Navbar = () => {
         )}
 
         {isGuest ? (
-          <button 
-            onClick={() => setIsLoginOpen(true)}
+          <Link 
+            to="/auth"
             className="px-5 py-1.5 border border-primary/40 text-primary text-xs font-bold uppercase tracking-widest rounded hover:bg-primary hover:text-background transition-all duration-300"
           >
             Sign In
-          </button>
+          </Link>
         ) : (
           <div className="flex items-center gap-3 group relative cursor-pointer">
             <div className="text-right hidden sm:block">
@@ -56,16 +53,6 @@ const Navbar = () => {
         )}
       </div>
 
-      <LoginModal 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
-        onSwitchToSignup={() => { setIsLoginOpen(false); setIsSignupOpen(true); }} 
-      />
-      <SignupModal 
-        isOpen={isSignupOpen} 
-        onClose={() => setIsSignupOpen(false)} 
-        onSwitchToLogin={() => { setIsSignupOpen(false); setIsLoginOpen(true); }} 
-      />
     </nav>
   );
 };

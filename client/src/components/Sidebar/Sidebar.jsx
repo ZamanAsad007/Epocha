@@ -30,10 +30,12 @@ const Sidebar = () => {
         </h2>
         <button
           onClick={clearSelectedPlace}
-          className="p-2 rounded-full hover:bg-background-card text-text-muted transition-colors border border-transparent hover:border-border"
+          className="group flex items-center gap-2 p-2 px-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/50 transition-all"
+          title="Close Archives"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted group-hover:text-primary">Close</span>
+          <svg className="w-4 h-4 text-text-muted group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
