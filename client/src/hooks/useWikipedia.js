@@ -1,45 +1,52 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const cache = {}; // module level cache, persists across renders
+
 const useWikipedia = (slug) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Simple in-memory cache
-  const [cache, setCache] = useState({});
-
   useEffect(() => {
     if (!slug) return;
 
+    // return cached result immediately
     if (cache[slug]) {
       setData(cache[slug]);
       return;
     }
 
-    const fetchWiki = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axios.get(
-          `https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`
-        );
-        const result = {
-          title: response.data.title,
-          description: response.data.description,
-          extract: response.data.extract,
-          thumbnail: response.data.thumbnail?.source,
-        };
-        setData(result);
-        setCache((prev) => ({ ...prev, [slug]: result }));
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // cancellation token
+    let cancelled = false;
+    setLoading(true);
 
-    fetchWiki();
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (!cancelled) {
+          const result = {
+            title: json.title,
+            description: json.description,
+            extract: json.extract,
+            thumbnail: json.thumbnail?.source,
+          };
+          cache[slug] = result; // save to cache
+          setData(result);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err);
+          setLoading(false);
+        }
+      });
+
+    // cleanup: cancel if slug changes before fetch completes
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   return { ...data, loading, error };

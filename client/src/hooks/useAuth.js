@@ -31,8 +31,9 @@ const useAuth = () => {
   const fetchProfile = async (supabaseUser) => {
     try {
       // Get full profile from our backend
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await axios.get('http://localhost:3000/api/auth/me', {
-        headers: { Authorization: `Bearer ${supabase.auth.session()?.access_token || (await supabase.auth.getSession()).data.session?.access_token}` }
+        headers: { Authorization: `Bearer ${session?.access_token}` }
       });
       setUser(response.data);
     } catch (error) {

@@ -15,7 +15,7 @@ const MapEvents = () => {
 };
 
 const MapView = () => {
-  const { selectedPlace } = useMapStore();
+  const { selectedPlace, isUpdating } = useMapStore();
   
   // Center of the world
   const center = [20, 0];
@@ -46,6 +46,15 @@ const MapView = () => {
         <ZoomControl position="bottomright" />
         <MarkerLayer />
       </MapContainer>
+
+      {/* Updating Indicator */}
+      {isUpdating && (
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-[3000] 
+                        bg-background-panel border border-border rounded-full
+                        px-4 py-2 text-primary text-xs font-bold uppercase tracking-widest shadow-2xl animate-in fade-in duration-300">
+          Updating Archive...
+        </div>
+      )}
 
       {/* Shadow overlay when sidebar is open for better depth */}
       {selectedPlace && (

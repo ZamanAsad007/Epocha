@@ -3,7 +3,7 @@ import useWikipedia from '../../hooks/useWikipedia';
 import { categoryConfig } from '../../utils/categoryConfig';
 import LoadingSpinner from '../UI/LoadingSpinner';
 
-const PlaceDetail = ({ place, onStartQuiz }) => {
+const PlaceDetail = ({ place, onStartQuiz, onViewStats }) => {
   const wikiSlug = place.wikipediaSlug || place.wikipedia_slug;
   const { title, description, extract, thumbnail, loading, error } = useWikipedia(wikiSlug);
   const config = categoryConfig[place.category];
@@ -74,7 +74,10 @@ const PlaceDetail = ({ place, onStartQuiz }) => {
         >
           <span className="opacity-60 text-sm">📝</span> Take Quiz
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">
+        <button 
+          onClick={onViewStats}
+          className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-primary"
+        >
           <span className="opacity-60 text-sm">📊</span> Stats
         </button>
         <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">

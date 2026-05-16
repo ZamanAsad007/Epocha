@@ -4,7 +4,7 @@ import { categoryConfig } from '../../utils/categoryConfig';
 import { usePlaces } from '../../hooks/usePlaces';
 
 const FilterBar = () => {
-  const { activeFilters, toggleFilter } = useMapStore();
+  const { activeFilters, toggleFilter, places } = useMapStore();
   const visiblePlaces = usePlaces();
 
   return (
@@ -40,8 +40,8 @@ const FilterBar = () => {
       </div>
 
       <div className="hidden sm:block">
-        <span className="font-mono text-[11px] text-primary/60 uppercase tracking-widest">
-          {visiblePlaces.length} places visible
+        <span className="font-mono text-[10px] text-primary/70 uppercase tracking-widest bg-background-card/50 px-3 py-1.5 rounded border border-border/50 shadow-inner">
+          Showing <span className="text-primary font-bold">{visiblePlaces.length}</span> of <span className="text-primary font-bold">{places.length}</span> records
         </span>
       </div>
     </div>
