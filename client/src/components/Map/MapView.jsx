@@ -1,7 +1,11 @@
-import { MapContainer, TileLayer, ZoomControl, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, ZoomControl, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import MarkerLayer from './MarkerLayer';
+import BorderOverlay from './BorderOverlay';
+import EventBanner from '../UI/EventBanner';
+import { getEventForYear } from '../../data/historicalEvents';
 import useMapStore from '../../store/mapStore';
+import { useState, useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 const MapEvents = () => {
@@ -14,8 +18,38 @@ const MapEvents = () => {
   return null;
 };
 
+const MapController = ({ setMapInstance }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (map) {
+      setMapInstance(map);
+    }
+  }, [map, setMapInstance]);
+  return null;
+};
+
 const MapView = () => {
-  const { selectedPlace, isUpdating } = useMapStore();
+  const { selectedPlace, isUpdating, sliderYear, bordersVisible } = useMapStore();
+  const [mapInstance, setMapInstance] = useState(null);
+  const [currentEvent, setCurrentEvent] = useState(null);
+  const prevYearRef = useRef(sliderYear);
+
+  useEffect(() => {
+    const prevYear = prevYearRef.current;
+    if (prevYear !== sliderYear) {
+      const event = getEventForYear(prevYear, sliderYear);
+      if (event) {
+        setCurrentEvent(event);
+      }
+      prevYearRef.current = sliderYear;
+    }
+  }, [sliderYear]);
+
+  const handleFlyTo = ([lng, lat]) => {
+    if (mapInstance) {
+      mapInstance.flyTo([lat, lng], 5, { duration: 1.5 });
+    }
+  };
   
   // Center of the world
   const center = [20, 0];
@@ -43,9 +77,18 @@ const MapView = () => {
           noWrap={false}
         />
         <MapEvents />
+        <MapController setMapInstance={setMapInstance} />
         <ZoomControl position="bottomright" />
         <MarkerLayer />
+        <BorderOverlay year={sliderYear} visible={bordersVisible} />
       </MapContainer>
+
+      {/* Event Overlay Banner */}
+      <EventBanner
+        event={currentEvent}
+        onDismiss={() => setCurrentEvent(null)}
+        onFlyTo={handleFlyTo}
+      />
 
       {/* Updating Indicator */}
       {isUpdating && (

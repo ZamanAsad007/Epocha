@@ -5,7 +5,8 @@ import axios from 'axios';
 import { debounce } from '../../utils/debounce';
 
 const eraLabels = [
-  { max: 500, label: "Ancient World" },
+  { max: 0, label: "Late Ancient World" },
+  { max: 500, label: "Early Ancient / Roman Era" },
   { max: 1500, label: "Medieval Era" },
   { max: 1900, label: "Colonial Era" },
   { max: 2024, label: "Modern Era" },
@@ -15,7 +16,9 @@ const TimeSlider = () => {
   const { sliderYear, setSliderYear, isGuest, setPlaces } = useMapStore();
   const [localYear, setLocalYear] = useState(sliderYear);
 
-  const displayYear = localYear < 0 ? `${Math.abs(localYear)} BC` : `${localYear} AD`;
+  const displayYear = localYear < 0 
+    ? `${Math.abs(localYear)} BC` 
+    : (localYear === 0 ? '1 AD' : `${localYear} AD`);
   const currentEra = eraLabels.find(era => localYear < era.max)?.label || "Modern Era";
 
   // Debounced store update
@@ -60,7 +63,7 @@ const TimeSlider = () => {
     if (isNaN(year)) return;
 
     // Clamp values
-    if (year < -3000) year = -3000;
+    if (year < -500) year = -500;
     if (year > 2024) year = 2024;
     
     if (isGuest && year > 1945) {
@@ -108,7 +111,7 @@ const TimeSlider = () => {
         <div className="relative group px-1">
           <input
             type="range"
-            min="-3000"
+            min="-500"
             max="2024"
             value={localYear || 0}
             onChange={handleChange}
@@ -128,7 +131,7 @@ const TimeSlider = () => {
         </div>
 
         <div className="flex justify-between text-[10px] font-mono text-text-muted uppercase tracking-tighter">
-          <span>3000 BC</span>
+          <span>500 BC</span>
           <span className="opacity-40">●</span>
           <span>2024 AD</span>
         </div>

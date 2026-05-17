@@ -1,0 +1,11 @@
+- [x] Update `TimeSlider.jsx` range and era labels.
+- [x] Create `borderManager.js` for GeoJSON loading and caching.
+- [x] Create `historicalEvents.js` for event data.
+- [x] Update `mapStore.js` to handle `bordersVisible` state.
+- [x] Update `FilterBar.jsx` with borders toggle button.
+- [x] Create `EventBanner.jsx` component.
+- [x] Update `tailwind.config.cjs` with slide-down animation.
+- [x] Update `index.css` with tooltip styling.
+- [x] Create `BorderOverlay.jsx` component.
+- [x] Update `MapView.jsx` to render the new overlays and handle flyTo.
+- [x] Verify functionality (Time slider, borders fade, events trigger).

@@ -111,3 +111,22 @@
 .leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
   transition: transform 0.3s ease-out, opacity 0.3s ease-in;
 }
+
+/* Border Overlay Tooltip */
+.border-tooltip {
+  background: #141414 !important;
+  border: 1px solid #C9A84C !important;
+  color: #F0E6D3 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  padding: 6px 10px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+}
+
+.border-tooltip::before {
+  display: none !important;
+}

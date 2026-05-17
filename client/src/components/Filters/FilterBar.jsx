@@ -4,7 +4,7 @@ import { categoryConfig } from '../../utils/categoryConfig';
 import { usePlaces } from '../../hooks/usePlaces';
 
 const FilterBar = () => {
-  const { activeFilters, toggleFilter, places } = useMapStore();
+  const { activeFilters, toggleFilter, places, bordersVisible, setBordersVisible, isGuest } = useMapStore();
   const visiblePlaces = usePlaces();
 
   return (
@@ -39,10 +39,36 @@ const FilterBar = () => {
         })}
       </div>
 
-      <div className="hidden sm:block">
-        <span className="font-mono text-[10px] text-primary/70 uppercase tracking-widest bg-background-card/50 px-3 py-1.5 rounded border border-border/50 shadow-inner">
-          Showing <span className="text-primary font-bold">{visiblePlaces.length}</span> of <span className="text-primary font-bold">{places.length}</span> records
-        </span>
+      <div className="flex items-center gap-4">
+        <div className="relative group">
+          <button
+            onClick={() => setBordersVisible(!bordersVisible)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded border text-xs font-sans transition-all duration-300
+              ${bordersVisible
+                ? 'border-primary text-primary bg-primary/10 shadow-[0_0_10px_rgba(201,168,76,0.1)] hover:bg-primary/20'
+                : 'border-border text-text-muted hover:border-text-muted/80 bg-background-card'
+              }`}
+          >
+            <span>🗺️</span>
+            <span className="font-bold uppercase tracking-wider text-[10px]">
+              {bordersVisible ? 'Borders ON' : 'Borders OFF'}
+            </span>
+            {isGuest && (
+              <span className="text-primary text-[10px] animate-pulse">🔒</span>
+            )}
+          </button>
+          {isGuest && (
+            <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block z-50 bg-[#141414] border border-[#C9A84C] rounded p-2.5 shadow-2xl text-[9px] uppercase tracking-widest text-[#C9A84C] font-bold font-mono whitespace-nowrap">
+              Sign in to see historical borders
+            </div>
+          )}
+        </div>
+
+        <div className="hidden sm:block">
+          <span className="font-mono text-[10px] text-primary/70 uppercase tracking-widest bg-background-card/50 px-3 py-1.5 rounded border border-border/50 shadow-inner">
+            Showing <span className="text-primary font-bold">{visiblePlaces.length}</span> of <span className="text-primary font-bold">{places.length}</span> records
+          </span>
+        </div>
       </div>
     </div>
   );
