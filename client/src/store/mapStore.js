@@ -11,12 +11,14 @@ const useMapStore = create(
     isGuest: true,
     places: [],
     user: null,
-    bordersVisible: true,
+    bordersVisible: false,
     isUpdating: false,
     // Actions
     setSelectedPlace: (place) => set({ selectedPlace: place }),
     setIsUpdating: (val) => set({ isUpdating: val }),
-    setBordersVisible: (val) => set({ bordersVisible: val }),
+    setBordersVisible: (val) => set((state) => ({
+      bordersVisible: state.isGuest ? false : val
+    })),
     toggleFilter: (category) =>
       set((state) => {
         const exists = state.activeFilters.includes(category);

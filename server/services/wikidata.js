@@ -1,3 +1,4 @@
+require('dotenv').config();
 const axios = require('axios');
 const prisma = require('./prisma');
 
@@ -6,11 +7,12 @@ const WIKIDATA_SPARQL_URL = 'https://query.wikidata.org/sparql';
 // ─────────────────────────────────────────────
 // FIX 1: Split into TWO queries to avoid timeout
 // Query A – War/Battle/Conflict places (uses UNION for subclass support)
+//
+// NOTE:
+// A single LIMITed query can return a geographically skewed subset.
+// To ensure Europe/Asia/etc. are included, we build per-continent queries and merge.
 // ─────────────────────────────────────────────
-const WAR_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-
+const WAR_INSTANCE_UNION = `
   # FIX 2: Use UNION + wdt:P31/wdt:P279* to catch subclasses
   # Without wdt:P279* (subclass traversal), most battlefields are missed
   {
@@ -29,9 +31,22 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
     ?place wdt:P31/wdt:P279* wd:Q1785071. # war memorial
     BIND(wd:Q1785071 AS ?instance)
   }
+`;
+
+const buildWarSparqlQuery = ({ continentQid, limit = 250 } = {}) => `
+SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
+                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
+
+  ${WAR_INSTANCE_UNION}
 
   # Must have coordinates
   ?place wdt:P625 ?coord.
+
+  ${continentQid ? `
+  # Prefer continent coverage via country → continent
+  ?place wdt:P17 ?country.
+  ?country wdt:P30 wd:${continentQid}.
+  ` : ''}
 
   OPTIONAL { ?place wdt:P571 ?inception. }
   OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
@@ -46,7 +61,7 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
   ?place rdfs:label ?placeLabel.
   FILTER(LANG(?placeLabel) = "en")
 }
-LIMIT 1000
+LIMIT ${limit}
 `;
 
 // ─────────────────────────────────────────────
@@ -224,11 +239,35 @@ const runSparqlQuery = async (query, label) => {
 };
 
 const fetchHistoricalPlaces = async () => {
-  // Run both queries in parallel for speed
-  const [warPlaces, culturalPlaces] = await Promise.all([
-    runSparqlQuery(WAR_SPARQL_QUERY,      'War & Conflicts'),
-    runSparqlQuery(CULTURAL_SPARQL_QUERY, 'Cultural & Heritage'),
-  ]);
+  const continents = [
+    { qid: 'Q46', label: 'Europe' },
+    { qid: 'Q48', label: 'Asia' },
+    { qid: 'Q49', label: 'North America' },
+    { qid: 'Q18', label: 'South America' },
+    { qid: 'Q15', label: 'Africa' },
+    { qid: 'Q55643', label: 'Oceania' },
+  ];
+
+  // Run war queries per continent to avoid a skewed LIMIT sample
+  const warByContinent = (await Promise.all(
+    continents.map(c =>
+      runSparqlQuery(
+        buildWarSparqlQuery({ continentQid: c.qid, limit: 250 }),
+        `War & Conflicts (${c.label})`
+      )
+    )
+  )).flat();
+
+  // Fallback war query for items without country/continent metadata
+  const warFallback = await runSparqlQuery(
+    buildWarSparqlQuery({ limit: 500 }),
+    'War & Conflicts (Fallback)'
+  );
+
+  const warPlaces = [...warByContinent, ...warFallback];
+
+  // Cultural/Heritage (single query)
+  const culturalPlaces = await runSparqlQuery(CULTURAL_SPARQL_QUERY, 'Cultural & Heritage');
 
   // FIX 6: Deduplicate by wikidataId (war query takes priority)
   const seen  = new Set();

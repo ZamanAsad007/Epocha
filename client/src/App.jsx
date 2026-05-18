@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import useMapStore from './store/mapStore';
 import Navbar from "./components/UI/Navbar";
 import MapView from "./components/Map/MapView";
 import FilterBar from "./components/Filters/FilterBar";
@@ -11,19 +9,6 @@ import DailyBanner from './components/UI/DailyBanner';
 import AuthPage from './pages/AuthPage';
 
 function App() {
-  const { setPlaces, sliderYear } = useMapStore();
-
-  useEffect(() => {
-    const fetchInitialPlaces = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/places?year=${sliderYear}`);
-        setPlaces(response.data);
-      } catch (error) {
-        console.error('Error loading initial archive data:', error);
-      }
-    };
-    fetchInitialPlaces();
-  }, [setPlaces]);
 
   return (
     <Router>

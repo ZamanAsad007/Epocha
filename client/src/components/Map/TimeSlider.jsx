@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import useMapStore from '../../store/mapStore';
 import LockBadge from '../UI/LockBadge';
-import axios from 'axios';
 import { debounce } from '../../utils/debounce';
 
 const eraLabels = [
@@ -13,7 +12,7 @@ const eraLabels = [
 ];
 
 const TimeSlider = () => {
-  const { sliderYear, setSliderYear, isGuest, setPlaces } = useMapStore();
+  const { sliderYear, setSliderYear, isGuest } = useMapStore();
   const [localYear, setLocalYear] = useState(sliderYear);
 
   const displayYear = localYear < 0 
@@ -25,18 +24,8 @@ const TimeSlider = () => {
   const debouncedSetYear = useCallback(
     debounce((year) => {
       setSliderYear(year);
-      // Fetch places for the new year
-      const fetchPlacesByYear = async (y) => {
-        try {
-          const response = await axios.get(`http://localhost:3000/api/places?year=${y}`);
-          if (setPlaces) setPlaces(response.data);
-        } catch (error) {
-          console.error('Error fetching places:', error);
-        }
-      };
-      fetchPlacesByYear(year);
     }, 400),
-    [setSliderYear, setPlaces]
+    [setSliderYear]
   );
 
   const handleChange = (e) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import useMapStore from '../../store/mapStore';
+import { api } from '../../utils/api.js';
 
 const DailyBanner = () => {
   const { isGuest } = useMapStore();
@@ -20,7 +20,7 @@ const DailyBanner = () => {
 
     const fetchBanner = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/places/banner/today');
+        const response = await api.get('/api/places/banner/today');
         setEvent(response.data);
       } catch (error) {
         console.error('Error fetching banner:', error);

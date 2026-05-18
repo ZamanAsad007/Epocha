@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import useMapStore from '../store/mapStore';
-import axios from 'axios';
+import { api } from '../utils/api.js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -32,7 +32,7 @@ const useAuth = () => {
     try {
       // Get full profile from our backend
       const { data: { session } } = await supabase.auth.getSession();
-      const response = await axios.get('http://localhost:3000/api/auth/me', {
+      const response = await api.get('/api/auth/me', {
         headers: { Authorization: `Bearer ${session?.access_token}` }
       });
       setUser(response.data);
@@ -50,7 +50,7 @@ const useAuth = () => {
 
   const signup = async (email, password, displayName) => {
     // Call our backend to handle registration + Prisma sync
-    const response = await axios.post('http://localhost:3000/api/auth/register', {
+    const response = await api.post('/api/auth/register', {
       email,
       password,
       displayName

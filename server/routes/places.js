@@ -9,12 +9,21 @@ router.get('/', async (req, res, next) => {
     const { category, era, year } = req.query;
 
     const where = {};
-    if (category) where.category = category;
-    if (era) where.era = era;
-    if (year) {
-      where.year = {
-        lte: parseInt(year)
-      };
+
+    if (category) {
+      where.category = { equals: String(category), mode: 'insensitive' };
+    }
+
+    if (era) {
+      where.era = { equals: String(era), mode: 'insensitive' };
+    }
+
+    if (year !== undefined) {
+      const y = Number.parseInt(String(year), 10);
+      if (!Number.isNaN(y)) {
+        // Include records with unknown year so seeded war data isn't accidentally filtered out.
+        where.OR = [{ year: { lte: y } }, { year: null }];
+      }
     }
 
     const places = await prisma.place.findMany({ where });
