@@ -42,16 +42,19 @@ const FilterBar = () => {
       <div className="flex items-center gap-4">
         <div className="relative group">
           <button
-            onClick={() => setBordersVisible(!bordersVisible)}
+            onClick={() => !isGuest && setBordersVisible(!bordersVisible)}
+            disabled={isGuest}
             className={`flex items-center gap-2 px-3 py-1.5 rounded border text-xs font-sans transition-all duration-300
-              ${bordersVisible
-                ? 'border-primary text-primary bg-primary/10 shadow-[0_0_10px_rgba(201,168,76,0.1)] hover:bg-primary/20'
-                : 'border-border text-text-muted hover:border-text-muted/80 bg-background-card'
+              ${isGuest
+                ? 'border-border/50 text-text-muted/50 bg-background-card/50 cursor-not-allowed opacity-60'
+                : bordersVisible
+                  ? 'border-primary text-primary bg-primary/10 shadow-[0_0_10px_rgba(201,168,76,0.1)] hover:bg-primary/20 cursor-pointer'
+                  : 'border-border text-text-muted hover:border-text-muted/80 bg-background-card cursor-pointer'
               }`}
           >
             <span>🗺️</span>
             <span className="font-bold uppercase tracking-wider text-[10px]">
-              {bordersVisible ? 'Borders ON' : 'Borders OFF'}
+              {isGuest ? 'Borders' : (bordersVisible ? 'Borders ON' : 'Borders OFF')}
             </span>
             {isGuest && (
               <span className="text-primary text-[10px] animate-pulse">🔒</span>

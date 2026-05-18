@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import useMapStore from '../../store/mapStore';
 import LoadingSpinner from '../UI/LoadingSpinner';
+import { api } from '../../utils/api.js';
 
 const QuizPanel = ({ placeId, onBack }) => {
   const [questions, setQuestions] = useState([]);
@@ -17,7 +17,7 @@ const QuizPanel = ({ placeId, onBack }) => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/quiz/${placeId}`);
+        const response = await api.get(`/api/quiz/${placeId}`);
         setQuestions(response.data);
       } catch (error) {
         console.error('Error fetching quiz:', error);
@@ -51,7 +51,7 @@ const QuizPanel = ({ placeId, onBack }) => {
   const saveScore = async () => {
     if (isGuest) return;
     try {
-      await axios.post(`http://localhost:3000/api/quiz/${placeId}/score`, {
+      await api.post(`/api/quiz/${placeId}/score`, {
         score,
         total: questions.length
       });

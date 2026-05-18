@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import LoadingSpinner from '../UI/LoadingSpinner';
+import { api } from '../../utils/api.js';
 
 const StatsPanel = ({ selectedPlace }) => {
   const [stats, setStats] = useState(null);
@@ -9,7 +9,7 @@ const StatsPanel = ({ selectedPlace }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/stats');
+        const response = await api.get('/api/stats');
         setStats(response.data);
       } catch (error) {
         console.error('Error fetching stats:', error);
