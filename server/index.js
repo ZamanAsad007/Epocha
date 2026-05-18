@@ -7,6 +7,7 @@ const placesRoutes = require('./routes/places');
 const quizRoutes = require('./routes/quiz');
 const statsRoutes = require('./routes/stats');
 const authRoutes = require('./routes/auth');
+const bannerRoutes = require('./routes/banner');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.use('/api/places', placesRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/banner', bannerRoutes);
 
 // Base route
 app.get('/', (req, res) => {

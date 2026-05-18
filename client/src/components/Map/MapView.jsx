@@ -3,6 +3,7 @@ import L from 'leaflet';
 import MarkerLayer from './MarkerLayer';
 import BorderOverlay from './BorderOverlay';
 import EventBanner from '../UI/EventBanner';
+import ScrollBanner from '../UI/ScrollBanner';
 import { getEventForYear } from '../../data/historicalEvents';
 import useMapStore from '../../store/mapStore';
 import { useState, useEffect, useRef } from 'react';
@@ -50,6 +51,12 @@ const MapView = () => {
       mapInstance.flyTo([lat, lng], 5, { duration: 1.5 });
     }
   };
+
+  const handleFlyToPlace = (place) => {
+    if (mapInstance && place?.lat !== undefined && place?.lng !== undefined) {
+      mapInstance.flyTo([place.lat, place.lng], 8, { duration: 1.5 });
+    }
+  };
   
   // Center of the world
   const center = [20, 0];
@@ -89,6 +96,8 @@ const MapView = () => {
         onDismiss={() => setCurrentEvent(null)}
         onFlyTo={handleFlyTo}
       />
+
+      <ScrollBanner onFlyToPlace={handleFlyToPlace} />
 
       {/* Updating Indicator */}
       {isUpdating && (

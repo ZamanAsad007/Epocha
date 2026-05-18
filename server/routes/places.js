@@ -33,26 +33,6 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// GET /api/banner/today - Get a historical event for today
-router.get('/banner/today', async (req, res, next) => {
-  try {
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-
-    // In a real app, you'd query a BannerEvent table or Wikidata
-    const events = [
-      { year: 1945, title: "End of WWII in Europe", description: "Victory in Europe Day marked the formal acceptance by the Allies of the unconditional surrender of Nazi Germany's armed forces." },
-      { year: 1789, title: "Storming of the Bastille", description: "A state prison on the east side of Paris, known as the Bastille, was attacked by an angry and aggressive mob." }
-    ];
-    
-    const randomEvent = events[Math.floor(Math.random() * events.length)];
-    res.json(randomEvent);
-  } catch (error) {
-    next(error);
-  }
-});
-
 // GET /api/places/bookmarks/all - Get all bookmarks for user
 router.get('/bookmarks/all', authMiddleware, async (req, res, next) => {
   try {

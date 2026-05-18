@@ -5,7 +5,6 @@ import MapView from "./components/Map/MapView";
 import FilterBar from "./components/Filters/FilterBar";
 import TimeSlider from "./components/Map/TimeSlider";
 import Sidebar from "./components/Sidebar/Sidebar";
-import DailyBanner from './components/UI/DailyBanner';
 import AuthPage from './pages/AuthPage';
 
 function App() {
@@ -18,7 +17,6 @@ function App() {
           <Route path="/" element={
             <>
               <Navbar />
-              <DailyBanner />
               <main className="flex-1 relative overflow-hidden">
                 <MapView />
                 <div className="absolute inset-x-0 top-0 z-[2500]">
