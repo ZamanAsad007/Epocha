@@ -29,9 +29,9 @@ module.exports = {
         },
         war: "#C0392B",
         culture: "#C9A84C",
-        music: "#7D5BA6",
         religion: "#2980B9",
         ruins: "#7F8C8D",
+        architecture: "#E67E22",
       },
       fontFamily: {
         display: ['Cinzel', 'serif'],

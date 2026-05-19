@@ -3,6 +3,7 @@ import L from 'leaflet';
 import MarkerLayer from './MarkerLayer';
 import BorderOverlay from './BorderOverlay';
 import EventBanner from '../UI/EventBanner';
+import ScrollBanner from '../UI/ScrollBanner';
 import { getEventForYear } from '../../data/historicalEvents';
 import useMapStore from '../../store/mapStore';
 import { useState, useEffect, useRef } from 'react';
@@ -29,7 +30,14 @@ const MapController = ({ setMapInstance }) => {
 };
 
 const MapView = () => {
-  const { selectedPlace, isUpdating, sliderYear, bordersVisible } = useMapStore();
+  const {
+    selectedPlace,
+    isUpdating,
+    sliderYear,
+    bordersVisible,
+    pendingFlyToPlace,
+    clearPendingFlyToPlace,
+  } = useMapStore();
   const [mapInstance, setMapInstance] = useState(null);
   const [currentEvent, setCurrentEvent] = useState(null);
   const prevYearRef = useRef(sliderYear);
@@ -45,9 +53,22 @@ const MapView = () => {
     }
   }, [sliderYear]);
 
+  useEffect(() => {
+    if (!mapInstance || !pendingFlyToPlace?.lat || !pendingFlyToPlace?.lng) return;
+
+    mapInstance.flyTo([pendingFlyToPlace.lat, pendingFlyToPlace.lng], 8, { duration: 1.5 });
+    clearPendingFlyToPlace();
+  }, [mapInstance, pendingFlyToPlace, clearPendingFlyToPlace]);
+
   const handleFlyTo = ([lng, lat]) => {
     if (mapInstance) {
       mapInstance.flyTo([lat, lng], 5, { duration: 1.5 });
+    }
+  };
+
+  const handleFlyToPlace = (place) => {
+    if (mapInstance && place?.lat !== undefined && place?.lng !== undefined) {
+      mapInstance.flyTo([place.lat, place.lng], 8, { duration: 1.5 });
     }
   };
   
@@ -89,6 +110,8 @@ const MapView = () => {
         onDismiss={() => setCurrentEvent(null)}
         onFlyTo={handleFlyTo}
       />
+
+      <ScrollBanner onFlyToPlace={handleFlyToPlace} />
 
       {/* Updating Indicator */}
       {isUpdating && (

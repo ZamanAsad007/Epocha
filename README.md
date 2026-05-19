@@ -10,7 +10,7 @@ Epocha is an interactive historical map web application that lets users explore 
 ### 🌍 Core (Available to all users)
 - **Interactive World Map** — powered by Leaflet.js + OpenStreetMap, no API key required
 - **Historical Markers** — color-coded pins for every category across all continents
-- **Category Filtering** — toggle War ⚔️, Culture 🏛️, Music 🎵, Religion 🕌, Ruins 🗿
+- **Category Filtering** — toggle War ⚔️, Culture 🏛️, Music 🎵, Religion 🕌, Architecture 🏗️
 - **Place Details Sidebar** — click any marker to read a live Wikipedia description, view era and category badges
 - **Pop Quiz ↔ Statistics Toggle** — switch between testing your knowledge and viewing global stats
 - **Time Slider** — locked at 1945 AD for guests (see premium)
@@ -130,7 +130,7 @@ epocha/
 model Place {
   id             String          @id
   name           String
-  category       String          // war | culture | music | religion | ruins
+  category       String          // war | culture | music | religion | architecture
   era            String          // ancient | medieval | colonial | modern
   lat            Float
   lng            Float

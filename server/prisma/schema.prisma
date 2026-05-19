@@ -14,7 +14,7 @@ datasource db {
 model Place {
   id             String          @id @default(cuid())
   name           String
-  category       String          // war | culture | music | religion | ruins
+  category       String          // war | culture | religion | architecture
   era            String          // ancient | medieval | colonial | modern
   lat            Float
   lng            Float
@@ -27,8 +27,25 @@ model Place {
   quizQuestions  QuizQuestion[]
   bookmarks      Bookmark[]
   quizScores     QuizScore[]
+  bannerEvents   BannerEvent[]
 
   @@map("places")
+}
+
+model BannerEvent {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  dateMonth   Int       @map("date_month")
+  dateDay     Int       @map("date_day")
+  title       String
+  year        Int
+  description String
+  category    String    @default("culture")
+  placeId     String?   @map("place_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  place       Place?    @relation(fields: [placeId], references: [id])
+
+  @@index([dateMonth, dateDay], map: "banner_events_date_idx")
+  @@map("banner_events")
 }
 
 model QuizQuestion {

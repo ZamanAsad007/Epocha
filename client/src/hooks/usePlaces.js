@@ -7,11 +7,11 @@ const normalizeCategory = (raw) => {
   const c = String(raw ?? "").trim().toLowerCase();
   if (!c) return "culture";
 
-  const known = ["war", "culture", "music", "religion", "ruins", "architecture"];
+  const known = ["war", "culture", "music", "religion", "architecture"];
   if (known.includes(c)) return c;
 
   if (/(war|wars|conflict|battle|military)/.test(c)) return "war";
-  if (c.includes("ruin")) return "ruins";
+  if (c.includes("ruin")) return "architecture";
   if (c.includes("relig")) return "religion";
   if (c.includes("music")) return "music";
   if (c.includes("arch")) return "architecture";

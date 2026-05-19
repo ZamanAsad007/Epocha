@@ -5,8 +5,8 @@ import MapView from "./components/Map/MapView";
 import FilterBar from "./components/Filters/FilterBar";
 import TimeSlider from "./components/Map/TimeSlider";
 import Sidebar from "./components/Sidebar/Sidebar";
-import DailyBanner from './components/UI/DailyBanner';
 import AuthPage from './pages/AuthPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
 
@@ -15,10 +15,10 @@ function App() {
       <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-text-primary font-sans">
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/" element={
             <>
               <Navbar />
-              <DailyBanner />
               <main className="flex-1 relative overflow-hidden">
                 <MapView />
                 <div className="absolute inset-x-0 top-0 z-[2500]">

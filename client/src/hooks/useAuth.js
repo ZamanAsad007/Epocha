@@ -35,11 +35,22 @@ const useAuth = () => {
       const response = await api.get('/api/auth/me', {
         headers: { Authorization: `Bearer ${session?.access_token}` }
       });
-      setUser(response.data);
+      setUser(response.data.user || response.data);
+      return response.data;
     } catch (error) {
       console.error('Error fetching profile:', error);
       setUser(supabaseUser); // Fallback to basic supabase user
+      return null;
     }
+  };
+
+  const updateProfile = async (payload) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const response = await api.put('/api/auth/me', payload, {
+      headers: { Authorization: `Bearer ${session?.access_token}` }
+    });
+    setUser(response.data.user || response.data);
+    return response.data;
   };
 
   const login = async (email, password) => {
@@ -66,7 +77,7 @@ const useAuth = () => {
     setUser(null);
   };
 
-  return { user, login, signup, logout };
+  return { user, login, signup, logout, fetchProfile, updateProfile };
 };
 
 export default useAuth;

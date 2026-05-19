@@ -14,23 +14,11 @@ export const categoryConfig = {
     hex: "#C9A84C",
     icon: "🏛️",
   },
-  music: {
-    label: "Music",
-    color: "music",
-    hex: "#7D5BA6",
-    icon: "🎵",
-  },
   religion: {
     label: "Religion",
     color: "religion",
     hex: "#2980B9",
     icon: "🕌",
-  },
-  ruins: {
-    label: "Ruins",
-    color: "ruins",
-    hex: "#7F8C8D",
-    icon: "🗿",
   },
   architecture: {
     label: "Architecture",
@@ -38,4 +26,13 @@ export const categoryConfig = {
     hex: "#E67E22",
     icon: "🏗️",
   },
+};
+
+export const BANNER_CATEGORY_COLORS = {
+  war: { color: '#C0392B', label: '⚔️ War & Conflict' },
+  culture: { color: '#C9A84C', label: '🏛️ Culture & Arts' },
+  music: { color: '#7D5BA6', label: '🎵 Music & Performance' },
+  religion: { color: '#2980B9', label: '🕌 Faith & Religion' },
+  architecture: { color: '#E67E22', label: '🏗️ Architecture & Heritage' },
+  science: { color: '#27AE60', label: '🔭 Science & Discovery' },
 };
