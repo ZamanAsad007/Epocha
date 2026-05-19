@@ -16,9 +16,19 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Attach local user data to request
-    const localUser = await prisma.user.findUnique({
+    let localUser = await prisma.user.findUnique({
       where: { id: user.id }
     });
+
+    if (!localUser) {
+      localUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          displayName: user.user_metadata?.display_name || user.user_metadata?.full_name || user.email?.split('@')?.[0] || 'Chronicle Seeker',
+        },
+      });
+    }
 
     req.user = { ...user, ...localUser };
     next();

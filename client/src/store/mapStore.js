@@ -13,9 +13,12 @@ const useMapStore = create(
     user: null,
     bordersVisible: false,
     isUpdating: false,
+    pendingFlyToPlace: null,
     // Actions
     setSelectedPlace: (place) => set({ selectedPlace: place }),
     setIsUpdating: (val) => set({ isUpdating: val }),
+    setPendingFlyToPlace: (place) => set({ pendingFlyToPlace: place }),
+    clearPendingFlyToPlace: () => set({ pendingFlyToPlace: null }),
     setBordersVisible: (val) => set((state) => ({
       bordersVisible: state.isGuest ? false : val
     })),

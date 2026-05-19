@@ -2,6 +2,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import useMapStore from '../../store/mapStore';
 import useAuth from '../../hooks/useAuth';
 
+const getInitials = (value) => {
+  const text = String(value || '').trim();
+  if (!text) return 'E';
+  return text
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+};
+
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, isGuest } = useMapStore();
@@ -9,12 +19,12 @@ const Navbar = () => {
 
   return (
     <nav className="h-14 bg-background-panel border-b border-border px-6 flex items-center justify-between z-[4000] sticky top-0 backdrop-blur-md bg-opacity-95">
-      <div className="flex items-center gap-3">
+      <Link to="/" className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-background shadow-[0_0_15px_rgba(201,168,76,0.3)]">
           <span className="text-xl font-serif">✥</span>
         </div>
         <h1 className="text-2xl font-display font-bold tracking-[0.2em] text-primary">EPOCHA</h1>
-      </div>
+      </Link>
 
       <div className="flex items-center gap-6">
         {!isGuest && (
@@ -26,7 +36,7 @@ const Navbar = () => {
         )}
 
         {isGuest ? (
-          <Link 
+          <Link
             to="/auth"
             className="px-5 py-1.5 border border-primary/40 text-primary text-xs font-bold uppercase tracking-widest rounded hover:bg-primary hover:text-background transition-all duration-300"
           >
@@ -38,16 +48,20 @@ const Navbar = () => {
               <p className="text-[10px] font-bold text-primary uppercase tracking-widest">{user?.displayName}</p>
               <p className="text-[9px] text-text-muted">Master Chronicler</p>
             </div>
-            <div className="w-8 h-8 rounded-full bg-background-card border border-border flex items-center justify-center text-primary group-hover:border-primary transition-colors">
-              {user?.avatarUrl ? <img src={user.avatarUrl} className="rounded-full" /> : <span>👤</span>}
+            <div className="w-8 h-8 rounded-full bg-background-card border border-border flex items-center justify-center text-primary group-hover:border-primary transition-colors overflow-hidden">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt={user?.displayName || 'Profile avatar'} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-[11px] font-bold">{getInitials(user?.displayName || user?.email)}</span>
+              )}
             </div>
-            
+
             {/* Dropdown Menu */}
             <div className="absolute right-0 top-full mt-2 w-48 bg-background-panel border border-border rounded shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-              <button className="w-full px-4 py-2 text-left text-xs text-text-primary hover:bg-background-card uppercase tracking-widest">Profile</button>
-              <button className="w-full px-4 py-2 text-left text-xs text-text-primary hover:bg-background-card uppercase tracking-widest">Bookmarks</button>
+              <button onClick={() => navigate('/profile')} className="w-full px-4 py-2 text-left text-xs text-text-primary hover:bg-background-card uppercase tracking-widest">Profile</button>
+              <button onClick={() => navigate('/profile#bookmarks')} className="w-full px-4 py-2 text-left text-xs text-text-primary hover:bg-background-card uppercase tracking-widest">Bookmarks</button>
               <div className="border-t border-border my-1"></div>
-              <button onClick={logout} className="w-full px-4 py-2 text-left text-xs text-war hover:bg-war/10 uppercase tracking-widest">Sign Out</button>
+              <button onClick={async () => { await logout(); navigate('/auth'); }} className="w-full px-4 py-2 text-left text-xs text-war hover:bg-war/10 uppercase tracking-widest">Sign Out</button>
             </div>
           </div>
         )}

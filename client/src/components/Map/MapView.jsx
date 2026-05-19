@@ -30,7 +30,14 @@ const MapController = ({ setMapInstance }) => {
 };
 
 const MapView = () => {
-  const { selectedPlace, isUpdating, sliderYear, bordersVisible } = useMapStore();
+  const {
+    selectedPlace,
+    isUpdating,
+    sliderYear,
+    bordersVisible,
+    pendingFlyToPlace,
+    clearPendingFlyToPlace,
+  } = useMapStore();
   const [mapInstance, setMapInstance] = useState(null);
   const [currentEvent, setCurrentEvent] = useState(null);
   const prevYearRef = useRef(sliderYear);
@@ -45,6 +52,13 @@ const MapView = () => {
       prevYearRef.current = sliderYear;
     }
   }, [sliderYear]);
+
+  useEffect(() => {
+    if (!mapInstance || !pendingFlyToPlace?.lat || !pendingFlyToPlace?.lng) return;
+
+    mapInstance.flyTo([pendingFlyToPlace.lat, pendingFlyToPlace.lng], 8, { duration: 1.5 });
+    clearPendingFlyToPlace();
+  }, [mapInstance, pendingFlyToPlace, clearPendingFlyToPlace]);
 
   const handleFlyTo = ([lng, lat]) => {
     if (mapInstance) {
