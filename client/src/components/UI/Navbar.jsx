@@ -28,10 +28,17 @@ const Navbar = () => {
 
       <div className="flex items-center gap-6">
         {!isGuest && (
-          <button className="text-text-muted hover:text-primary transition-colors p-2 rounded-full hover:bg-background-card">
+          <button
+            onClick={() => navigate('/profile#bookmarks')}
+            className="group relative text-text-muted hover:text-primary transition-colors p-2 rounded-full hover:bg-background-card"
+            title="Bookmarks"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
+            <span className="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-border bg-background-panel px-2.5 py-1 text-[10px] uppercase tracking-[0.25em] text-text-primary opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+              Bookmarks
+            </span>
           </button>
         )}
 
@@ -59,7 +66,6 @@ const Navbar = () => {
             {/* Dropdown Menu */}
             <div className="absolute right-0 top-full mt-2 w-48 bg-background-panel border border-border rounded shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
               <button onClick={() => navigate('/profile')} className="w-full px-4 py-2 text-left text-xs text-text-primary hover:bg-background-card uppercase tracking-widest">Profile</button>
-              <button onClick={() => navigate('/profile#bookmarks')} className="w-full px-4 py-2 text-left text-xs text-text-primary hover:bg-background-card uppercase tracking-widest">Bookmarks</button>
               <div className="border-t border-border my-1"></div>
               <button onClick={async () => { await logout(); navigate('/auth'); }} className="w-full px-4 py-2 text-left text-xs text-war hover:bg-war/10 uppercase tracking-widest">Sign Out</button>
             </div>

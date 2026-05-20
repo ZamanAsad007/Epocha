@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Navbar from '../components/UI/Navbar';
+import ProfileFooter from '../components/UI/ProfileFooter';
 import useAuth, { supabase } from '../hooks/useAuth';
 import useMapStore from '../store/mapStore';
 import { api } from '../utils/api';
@@ -89,6 +91,18 @@ const ProfilePage = () => {
 
   useEffect(() => {
     loadProfile();
+  }, []);
+
+  useEffect(() => {
+    const handleProfileRefresh = () => {
+      loadProfile();
+    };
+
+    window.addEventListener('epocha-profile-refresh', handleProfileRefresh);
+
+    return () => {
+      window.removeEventListener('epocha-profile-refresh', handleProfileRefresh);
+    };
   }, []);
 
   useEffect(() => {
@@ -183,24 +197,27 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-text-primary">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
-        <div className="flex items-center justify-between">
-          <Link
-            to="/"
-            className="text-xs uppercase tracking-[0.3em] text-text-muted hover:text-primary transition-colors"
-          >
-            ← Back to Map
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="text-xs uppercase tracking-[0.25em] px-4 py-2 rounded border border-war/30 text-war hover:bg-war/10 transition-colors"
-          >
-            Sign Out
-          </button>
-        </div>
+    <div className="min-h-screen flex flex-col bg-background text-text-primary overflow-hidden">
+      <Navbar />
 
-        <section className="rounded-3xl border border-border bg-background-panel/95 backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.24)] p-5 sm:p-6">
+      <main className="flex-1 min-h-0 overflow-y-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+          <div className="flex items-center justify-between">
+            <Link
+              to="/"
+              className="text-xs uppercase tracking-[0.3em] text-text-muted hover:text-primary transition-colors"
+            >
+              ← Back to Map
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-xs uppercase tracking-[0.25em] px-4 py-2 rounded border border-war/30 text-war hover:bg-war/10 transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
+
+          <section className="rounded-3xl border border-border bg-background-panel/95 backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.24)] p-5 sm:p-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-6">
               <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-background-card flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.25)] shrink-0">
@@ -281,22 +298,50 @@ const ProfilePage = () => {
               );
             })}
           </div>
-        </section>
+          </section>
 
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {statCards.map((stat) => (
-            <div key={stat.label} className="rounded-2xl border border-border bg-background-panel px-4 py-5 text-center">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-text-muted">{stat.label}</p>
-              <p className="mt-3 text-3xl sm:text-4xl font-mono font-bold text-primary">{stat.value}</p>
+          <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {statCards.map((stat) => (
+              <div key={stat.label} className="rounded-2xl border border-border bg-background-panel px-4 py-5 text-center">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-text-muted">{stat.label}</p>
+                <p className="mt-3 text-3xl sm:text-4xl font-mono font-bold text-primary">{stat.value}</p>
+              </div>
+            ))}
+          </section>
+
+          <section className="rounded-3xl border border-border bg-background-panel/95 backdrop-blur-md p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xs uppercase tracking-[0.3em] text-primary font-bold">Recent Quizzes</h2>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-text-muted">Last 5</span>
             </div>
-          ))}
-        </section>
 
-        <section id="bookmarks" className="rounded-3xl border border-border bg-background-panel/95 backdrop-blur-md p-5 sm:p-6 space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xs uppercase tracking-[0.3em] text-primary font-bold">Bookmarks</h2>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-text-muted">{profile.bookmarks.length} saved</span>
-          </div>
+          {profile.recentQuizzes.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border px-5 py-8 text-center text-text-muted">
+              No quizzes taken yet.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {profile.recentQuizzes.map((quiz) => (
+                <div key={quiz.id} className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-background-card px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-text-primary truncate">{quiz.place?.name || 'Unknown place'}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-text-muted">{quiz.place?.category || 'quiz'}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-mono text-primary text-sm">{quiz.score}/{quiz.total}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-text-muted">{formatRelativeDate(quiz.createdAt)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </section>
+
+          <section id="bookmarks" className="rounded-3xl border border-border bg-background-panel/95 backdrop-blur-md p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xs uppercase tracking-[0.3em] text-primary font-bold">Bookmarks</h2>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-text-muted">{profile.bookmarks.length} saved</span>
+            </div>
 
           {profile.bookmarks.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border px-5 py-10 text-center text-text-muted">
@@ -345,45 +390,12 @@ const ProfilePage = () => {
               })}
             </div>
           )}
-        </section>
+          </section>
 
-        <section className="rounded-3xl border border-border bg-background-panel/95 backdrop-blur-md p-5 sm:p-6 space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xs uppercase tracking-[0.3em] text-primary font-bold">Recent Quizzes</h2>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-text-muted">Last 5</span>
-          </div>
-
-          {profile.recentQuizzes.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border px-5 py-8 text-center text-text-muted">
-              No quizzes taken yet.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {profile.recentQuizzes.map((quiz) => (
-                <div key={quiz.id} className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-background-card px-4 py-3">
-                  <div className="min-w-0">
-                    <p className="font-medium text-text-primary truncate">{quiz.place?.name || 'Unknown place'}</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-text-muted">{quiz.place?.category || 'quiz'}</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-mono text-primary text-sm">{quiz.score}/{quiz.total}</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-text-muted">{formatRelativeDate(quiz.createdAt)}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <div className="pb-10 flex justify-center">
-          <button
-            onClick={handleLogout}
-            className="px-6 py-3 rounded-full border border-war/30 text-war uppercase tracking-[0.25em] text-xs hover:bg-war/10 transition-colors"
-          >
-            Sign Out
-          </button>
         </div>
-      </div>
+
+        <ProfileFooter />
+      </main>
     </div>
   );
 };
