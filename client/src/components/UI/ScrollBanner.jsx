@@ -11,6 +11,8 @@ import { BANNER_CATEGORY_COLORS } from '../../utils/categoryConfig';
 
 const DISPLAY_DURATION = 6000;
 
+const getBannerDismissalKey = (month, day) => `epocha-banner-dismissed-${month}-${day}`;
+
 const ScrollBanner = ({ onFlyToPlace }) => {
   const { isGuest } = useMapStore();
   const [visible, setVisible] = useState(false);
@@ -22,6 +24,16 @@ const ScrollBanner = ({ onFlyToPlace }) => {
     let isMounted = true;
     let closeTimer;
     const { month, day } = getUserLocalDate();
+    const dismissalKey = getBannerDismissalKey(month, day);
+
+    if (window.localStorage.getItem(dismissalKey) === '1') {
+      return undefined;
+    }
+
+    const dismissBanner = () => {
+      window.localStorage.setItem(dismissalKey, '1');
+      setVisible(false);
+    };
 
     api
       .get(`/api/banner/today?month=${month}&day=${day}`)
@@ -32,7 +44,7 @@ const ScrollBanner = ({ onFlyToPlace }) => {
         setEvent(bannerEvent);
         setVisible(true);
         closeTimer = setTimeout(() => {
-          if (isMounted) setVisible(false);
+          if (isMounted) dismissBanner();
         }, DISPLAY_DURATION);
       })
       .catch((error) => {
@@ -49,6 +61,14 @@ const ScrollBanner = ({ onFlyToPlace }) => {
 
   const categoryConfig =
     BANNER_CATEGORY_COLORS[event.category] || BANNER_CATEGORY_COLORS.culture;
+
+  const { month, day } = getUserLocalDate();
+  const dismissalKey = getBannerDismissalKey(month, day);
+
+  const handleDismiss = () => {
+    window.localStorage.setItem(dismissalKey, '1');
+    setVisible(false);
+  };
 
   return (
     <div className="fixed inset-0 z-[4500] flex items-center justify-center pointer-events-none px-3">
@@ -178,7 +198,7 @@ const ScrollBanner = ({ onFlyToPlace }) => {
                       <button
                         onClick={() => {
                           onFlyToPlace(event.place);
-                          setVisible(false);
+                          handleDismiss();
                         }}
                         className="text-xs px-4 py-2 rounded border transition-all duration-200"
                         style={{
@@ -212,7 +232,7 @@ const ScrollBanner = ({ onFlyToPlace }) => {
                     </span>
 
                     <button
-                      onClick={() => setVisible(false)}
+                      onClick={handleDismiss}
                       className="text-xs px-3 py-2 rounded border transition-colors duration-200"
                       style={{
                         color: '#5C5347',

@@ -42,17 +42,18 @@ const QuizPanel = ({ placeId, onBack }) => {
         setSelectedAnswer(null);
         setIsCorrect(null);
       } else {
+        const finalScore = correct ? score + 1 : score;
         setShowResult(true);
-        saveScore();
+        saveScore(finalScore);
       }
     }, 1500);
   };
 
-  const saveScore = async () => {
+  const saveScore = async (finalScore) => {
     if (isGuest) return;
     try {
       await api.post(`/api/quiz/${placeId}/score`, {
-        score,
+        score: finalScore,
         total: questions.length
       });
     } catch (error) {

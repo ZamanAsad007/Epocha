@@ -1,14 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useWikipedia from '../../hooks/useWikipedia';
+import { supabase } from '../../hooks/useAuth';
+import { api } from '../../utils/api';
 import { categoryConfig } from '../../utils/categoryConfig';
 import LoadingSpinner from '../UI/LoadingSpinner';
 
 const PlaceDetail = ({ place, onStartQuiz, onViewStats }) => {
+  const navigate = useNavigate();
   const wikiSlug = place.wikipediaSlug || place.wikipedia_slug;
   const { title, description, extract, thumbnail, loading, error } = useWikipedia(wikiSlug);
   const config = categoryConfig[place.category];
+  const [bookmarkState, setBookmarkState] = useState('idle');
 
   const displayYear = place.year < 0 ? `${Math.abs(place.year)} BC` : `${place.year} AD`;
+
+  useEffect(() => {
+    setBookmarkState('idle');
+  }, [place.id]);
+
+  const handleSaveBookmark = async () => {
+    if (bookmarkState === 'saving' || bookmarkState === 'saved') {
+      return;
+    }
+
+    setBookmarkState('saving');
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+
+      await api.post(
+        `/api/places/${place.id}/bookmark`,
+        {},
+        { headers: { Authorization: `Bearer ${session.access_token}` } }
+      );
+
+      setBookmarkState('saved');
+    } catch (saveError) {
+      console.error('Error saving bookmark:', saveError);
+      setBookmarkState('idle');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -80,8 +117,13 @@ const PlaceDetail = ({ place, onStartQuiz, onViewStats }) => {
         >
           <span className="opacity-60 text-sm">📊</span> Stats
         </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">
-          <span className="opacity-60 text-sm">🔖</span> Save
+        <button
+          onClick={handleSaveBookmark}
+          disabled={bookmarkState === 'saving' || bookmarkState === 'saved'}
+          className={`flex items-center justify-center gap-2 px-4 py-3 rounded border transition-all text-[11px] font-bold uppercase tracking-widest ${bookmarkState === 'saved' ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-background-card hover:bg-background-panel hover:border-primary/30 text-text-primary'} disabled:opacity-70 disabled:cursor-not-allowed`}
+        >
+          <span className="opacity-60 text-sm">{bookmarkState === 'saved' ? '✓' : '🔖'}</span>
+          {bookmarkState === 'saving' ? 'Saving...' : bookmarkState === 'saved' ? 'Saved' : 'Save'}
         </button>
         <button className="flex items-center justify-center gap-2 px-4 py-3 rounded border border-border bg-background-card hover:bg-background-panel hover:border-primary/30 transition-all text-[11px] font-bold uppercase tracking-widest text-text-muted opacity-50 cursor-not-allowed">
           <span className="opacity-60 text-sm">🔗</span> Share
