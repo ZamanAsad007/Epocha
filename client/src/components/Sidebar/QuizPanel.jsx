@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useMapStore from '../../store/mapStore';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import { api } from '../../utils/api.js';
+import { supabase } from '../../hooks/useAuth';
 
 const QuizPanel = ({ placeId, onBack }) => {
   const [questions, setQuestions] = useState([]);
@@ -43,8 +44,9 @@ const QuizPanel = ({ placeId, onBack }) => {
         setIsCorrect(null);
       } else {
         const finalScore = correct ? score + 1 : score;
-        setShowResult(true);
-        saveScore(finalScore);
+        saveScore(finalScore).finally(() => {
+          setShowResult(true);
+        });
       }
     }, 1500);
   };
@@ -52,10 +54,21 @@ const QuizPanel = ({ placeId, onBack }) => {
   const saveScore = async (finalScore) => {
     if (isGuest) return;
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        console.warn('Quiz score skipped because no auth session was found.');
+        return;
+      }
+
       await api.post(`/api/quiz/${placeId}/score`, {
         score: finalScore,
         total: questions.length
+      }, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
       });
+
+      window.dispatchEvent(new CustomEvent('epocha-profile-refresh'));
     } catch (error) {
       console.error('Error saving score:', error);
     }
