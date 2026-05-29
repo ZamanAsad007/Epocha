@@ -8,6 +8,18 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+const getGoogleRedirectUrl = () => {
+  if (import.meta.env.VITE_SUPABASE_REDIRECT_URL) {
+    return import.meta.env.VITE_SUPABASE_REDIRECT_URL;
+  }
+
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}/auth/callback`;
+  }
+
+  return undefined;
+};
+
 const useAuth = () => {
   const { setUser, user } = useMapStore();
 
@@ -39,6 +51,11 @@ const useAuth = () => {
       return response.data;
     } catch (error) {
       console.error('Error fetching profile:', error);
+      if (error?.response?.status === 403 && error?.response?.data?.code === 'EMAIL_NOT_VERIFIED') {
+        await supabase.auth.signOut();
+        setUser(null);
+        return null;
+      }
       setUser(supabaseUser); // Fallback to basic supabase user
       return null;
     }
@@ -54,21 +71,41 @@ const useAuth = () => {
   };
 
   const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const response = await api.post('/api/auth/login', { email, password });
+    const { session } = response.data || {};
+
+    if (session?.access_token && session?.refresh_token) {
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
+    }
+
+    return response.data;
+  };
+
+  const signInWithGoogle = async () => {
+    const redirectTo = getGoogleRedirectUrl();
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: redirectTo ? { redirectTo } : undefined,
+    });
+
     if (error) throw error;
     return data;
   };
 
   const signup = async (email, password, displayName) => {
-    // Call our backend to handle registration + Prisma sync
     const response = await api.post('/api/auth/register', {
       email,
       password,
       displayName
     });
-    
-    // Then sign in via supabase
-    await login(email, password);
+    return response.data;
+  };
+
+  const resendVerification = async (email) => {
+    const response = await api.post('/api/auth/resend-verification', { email });
     return response.data;
   };
 
@@ -77,7 +114,7 @@ const useAuth = () => {
     setUser(null);
   };
 
-  return { user, login, signup, logout, fetchProfile, updateProfile };
+  return { user, login, signup, logout, fetchProfile, updateProfile, signInWithGoogle, resendVerification };
 };
 
 export default useAuth;

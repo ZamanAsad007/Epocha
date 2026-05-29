@@ -26,7 +26,13 @@ const authMiddleware = async (req, res, next) => {
           id: user.id,
           email: user.email,
           displayName: user.user_metadata?.display_name || user.user_metadata?.full_name || user.email?.split('@')?.[0] || 'Chronicle Seeker',
+          emailVerified: true,
         },
+      });
+    } else if (!localUser.emailVerified) {
+      return res.status(403).json({
+        code: 'EMAIL_NOT_VERIFIED',
+        message: 'Please verify your email before continuing',
       });
     }
 
