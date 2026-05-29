@@ -7,6 +7,7 @@ import TimeSlider from "./components/Map/TimeSlider";
 import Sidebar from "./components/Sidebar/Sidebar";
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
       <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-text-primary font-sans">
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/" element={
             <>

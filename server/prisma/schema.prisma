@@ -69,11 +69,24 @@ model User {
   displayName  String?
   avatarUrl    String?
   isPremium    Boolean     @default(false)
+  emailVerified Boolean    @default(true)
   createdAt    DateTime    @default(now())
   bookmarks    Bookmark[]
   quizScores   QuizScore[]
+  verificationToken EmailVerificationToken?
 
   @@map("users")
+}
+
+model EmailVerificationToken {
+  id         String   @id @default(cuid())
+  userId     String   @unique @db.Uuid
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
 }
 
 model Bookmark {
