@@ -3,6 +3,8 @@
 
 Epocha is an interactive historical map web application that lets users explore significant historical places across the world. Click any marker to read its history, filter by category, travel through time with the era slider, test your knowledge with pop quizzes, and view global statistics — all in one beautiful map experience.
 
+**Live Demo:** https://epochatry.vercel.app/
+
 ---
 
 ## ✨ Features
@@ -60,7 +62,7 @@ Epocha is an interactive historical map web application that lets users explore 
 ### Deployment
 | Service | Purpose |
 |---|---|
-| Vercel | Frontend hosting |
+| Vercel | Frontend hosting — Live demo: https://epochatry.vercel.app/ |
 | Railway / Supabase | PostgreSQL database hosting |
 | Upstash Redis | API response caching |
 
@@ -208,23 +210,42 @@ cd epocha
 ```
 
 ### 2. Set up the frontend
+Change into the `client` folder, install dependencies, copy the example env file, then run the dev server:
+
 ```bash
 cd client
 npm install
 cp .env.example .env
-# Fill in your environment variables
+# Edit .env (VITE_API_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
 npm run dev
 ```
 
+Available frontend scripts (from `client/package.json`):
+
+- `npm run dev` — start Vite dev server
+- `npm run build` — build production assets
+- `npm run preview` — preview built app locally
+
 ### 3. Set up the backend
+Change into the `server` folder, install dependencies, copy the example env file, run Prisma migrations, then start the server:
+
 ```bash
 cd server
 npm install
 cp .env.example .env
-# Fill in your environment variables
+# Edit .env (DATABASE_URL, SUPABASE keys, ANTHROPIC_API_KEY)
 npx prisma migrate dev
+# Start in development (nodemon)
 npm run dev
 ```
+
+Available backend scripts (from `server/package.json`):
+
+- `npm run dev` — start server with `nodemon` (auto-reload)
+- `npm start` — start server with `node index.js`
+- `npm run seed` — run seed/utility scripts (e.g. `services/wikidata.js`)
+- `npm run prisma:generate` — `npx prisma generate`
+- `npm run prisma:migrate` — `npx prisma migrate dev`
 
 ### 4. Environment Variables
 
@@ -277,8 +298,8 @@ GET  /api/auth/me                   # Get current user profile (auth required)
 ## 🏗️ Development Phases
 
 - [x] **Phase 1** — Map, markers, category filter, Wikipedia descriptions, time slider UI
-- [ ] **Phase 2** — Auth, Wikidata integration, quiz system, stats panel, backend API
-- [ ] **Phase 3** — Share a place, AI Story Mode, daily banner, bookmarks, civilization overlays
+- [ ] **Phase 2** — Auth, Wikidata integration, quiz system, stats panel, backend API (partial)
+- [~] **Phase 3** — Border snapshots & EventBanner work in progress (see [implementation_plan.md](implementation_plan.md) and [task.md](task.md) in the repository)
 
 ---
 
