@@ -74,7 +74,7 @@ const MapView = () => {
   
   // Center of the world
   const center = [20, 0];
-  const zoom = 2;
+  const zoom = 3;
 
   // Define vertical bounds only to allow infinite horizontal scrolling
   const verticalBounds = L.latLngBounds(L.latLng(-85, -500), L.latLng(85, 500));
@@ -84,17 +84,20 @@ const MapView = () => {
       <MapContainer
         center={center}
         zoom={zoom}
-        minZoom={2.5}
+        minZoom={2}
+        maxZoom={18}
         maxBounds={verticalBounds}
         maxBoundsViscosity={0.5}
         worldCopyJump={true}
         zoomControl={false}
         className="w-full h-full"
-        style={{ background: '#0D0D0D' }}
+        style={{ backgroundColor: '#0D0D0D' }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-          url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+          attribution='© <a href="https://www.openstreetmap.org/copyright" style="color:#C9A84C">OpenStreetMap</a> © <a href="https://carto.com/" style="color:#C9A84C">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          maxZoom={19}
+          subdomains="abcd"
           noWrap={false}
         />
         <MapEvents />

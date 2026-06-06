@@ -6,7 +6,11 @@ import { devtools } from "zustand/middleware";
 const useMapStore = create(
   devtools((set) => ({
     selectedPlace: null,
+<<<<<<< Updated upstream
     activeFilters: ["war", "culture", "religion", "architecture"],
+=======
+    activeFilters: ["war", "culture", "religion", "ruins", "architecture"],
+>>>>>>> Stashed changes
     sliderYear: 1945,
     isGuest: true,
     places: [],

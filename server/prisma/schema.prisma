@@ -14,7 +14,15 @@ datasource db {
 model Place {
   id             String          @id @default(cuid())
   name           String
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   category       String          // war | culture | religion | architecture
+=======
+  category       String          // war | culture | religion | ruins | architecture
+>>>>>>> Stashed changes
+=======
+  category       String          // war | culture | religion | ruins | architecture
+>>>>>>> Stashed changes
   era            String          // ancient | medieval | colonial | modern
   lat            Float
   lng            Float

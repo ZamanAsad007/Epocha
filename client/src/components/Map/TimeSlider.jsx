@@ -68,31 +68,31 @@ const TimeSlider = () => {
       <div className="p-5 bg-background-panel/90 backdrop-blur-md rounded border border-border shadow-[0_0_40px_rgba(0,0,0,0.4)] space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <div className="relative">
                 <input
                   type="number"
                   value={localYear}
                   onChange={handleInputChange}
-                  className="w-24 bg-background-card/50 border border-border/50 rounded px-2 py-1 font-mono text-xl font-bold text-primary focus:outline-none focus:border-primary/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-20 sm:w-24 bg-background-card/50 border border-border/50 rounded px-2 py-1 font-mono text-lg sm:text-xl font-bold text-primary focus:outline-none focus:border-primary/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="Year"
                 />
-                <span className="absolute -top-4 left-0 text-[9px] text-text-muted uppercase tracking-widest font-bold">
+                <span className="absolute -top-4 left-0 text-[8px] sm:text-[9px] text-text-muted uppercase tracking-widest font-bold">
                   Go to Year
                 </span>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-2xl font-bold text-primary tracking-tighter min-w-[100px]">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="font-mono text-xl sm:text-2xl font-bold text-primary tracking-tighter min-w-fit">
                   {displayYear}
                 </span>
                 {isGuest && <LockBadge />}
               </div>
             </div>
-            <span className="text-[10px] font-display text-text-muted uppercase tracking-[0.2em] mt-1">
+            <span className="text-[9px] sm:text-[10px] font-display text-text-muted uppercase tracking-[0.2em] mt-1">
               {currentEra}
             </span>
           </div>
-          <div className="text-[10px] uppercase tracking-[0.25em] text-text-muted font-bold font-sans text-right hidden sm:block">
+          <div className="text-[8px] sm:text-[10px] uppercase tracking-[0.25em] text-text-muted font-bold font-sans text-right hidden sm:block">
             Chronological Archive
           </div>
         </div>
@@ -119,7 +119,7 @@ const TimeSlider = () => {
           )}
         </div>
 
-        <div className="flex justify-between text-[10px] font-mono text-text-muted uppercase tracking-tighter">
+        <div className="flex justify-between text-[8px] sm:text-[10px] font-mono text-text-muted uppercase tracking-tighter">
           <span>500 BC</span>
           <span className="opacity-40">●</span>
           <span>2024 AD</span>

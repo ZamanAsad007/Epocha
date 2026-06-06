@@ -1,0 +1,28 @@
+name: Keep Services Alive
+
+on:
+  schedule:
+    # Runs every 2 days at 12:00 UTC
+    # Cron format: minute hour day month weekday
+    - cron: '0 12 */2 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/places?limit=1" \
+          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+          echo "✅ Supabase pinged"
+
+      - name: Ping Render Backend
+        run: |
+          curl -X GET "${{ secrets.RENDER_URL }}/api/places?limit=1"
+          echo "✅ Render backend pinged"
+
+      - name: Done
+        run: echo "All services kept alive successfully 🚀"
