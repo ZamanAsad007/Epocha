@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from "./components/UI/Navbar";
 import MapView from "./components/Map/MapView";
@@ -8,8 +8,22 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
+import { supabase } from './hooks/useAuth';
 
 function App() {
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+
+      if (event === 'SIGNED_OUT') {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <Router>

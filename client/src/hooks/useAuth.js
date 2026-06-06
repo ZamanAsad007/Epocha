@@ -6,18 +6,20 @@ import { api } from '../utils/api.js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
 
 const getGoogleRedirectUrl = () => {
-  if (import.meta.env.VITE_SUPABASE_REDIRECT_URL) {
-    return import.meta.env.VITE_SUPABASE_REDIRECT_URL;
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5173';
   }
 
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}/auth/callback`;
-  }
-
-  return undefined;
+  return 'https://epochatry.vercel.app';
 };
 
 const useAuth = () => {
@@ -88,7 +90,7 @@ const useAuth = () => {
     const redirectTo = getGoogleRedirectUrl();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: redirectTo ? { redirectTo } : undefined,
+      options: { redirectTo },
     });
 
     if (error) throw error;
