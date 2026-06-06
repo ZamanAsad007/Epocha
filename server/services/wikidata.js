@@ -4,9 +4,7 @@ const prisma = require('./prisma');
 
 const WIKIDATA_SPARQL_URL = 'https://query.wikidata.org/sparql';
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-// War query helper used to split large historical queries by continent.
+// Reusable WAR instance union (matches many war-related types)
 const WAR_INSTANCE_UNION = `
   {
     ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
@@ -44,456 +42,13 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
 
   ${WAR_INSTANCE_UNION}
 
-=======
-// Europe wars & battles
-const WAR_EUROPE_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-=======
-// Europe wars & battles
-const WAR_EUROPE_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
->>>>>>> Stashed changes
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-<<<<<<< Updated upstream
-=======
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 wd:Q46.                 # Europe
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Asia wars & battles
-const WAR_ASIA_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 wd:Q48.                 # Asia
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Americas wars & battles (North & South America)
-const WAR_AMERICAS_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 ?continent.
-  VALUES ?continent { wd:Q49 wd:Q18 }        # North & South America
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// ROW wars & battles (Africa & Oceania)
-const WAR_ROW_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 ?continent.
-  VALUES ?continent { wd:Q15 wd:Q666 }       # Africa & Oceania
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Ruins Query — Completely separate, flat direct lookup (no recursive traversal!)
-const RUINS_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  VALUES ?instance {
-    wd:Q839954   # archaeological site
-    wd:Q141400   # ruins
-    wd:Q10969    # ruin
-    wd:Q1194611  # ruined city
-    wd:Q2354482  # ancient city
-    wd:Q15893266 # former settlement
-    wd:Q56061    # abandoned city
-    wd:Q1060829  # ancient settlement
-    wd:Q3812007  # deserted village
-    wd:Q9259     # UNESCO World Heritage Site
-    wd:Q174782   # historical monument
-  }
-
-  ?place wdt:P31 ?instance.
->>>>>>> Stashed changes
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 wd:Q46.                 # Europe
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-<<<<<<< Updated upstream
-`;
-
-// Asia wars & battles
-const WAR_ASIA_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 wd:Q48.                 # Asia
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Americas wars & battles (North & South America)
-const WAR_AMERICAS_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 ?continent.
-  VALUES ?continent { wd:Q49 wd:Q18 }        # North & South America
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// ROW wars & battles (Africa & Oceania)
-const WAR_ROW_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 ?continent.
-  VALUES ?continent { wd:Q15 wd:Q666 }       # Africa & Oceania
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Ruins Query — Completely separate, flat direct lookup (no recursive traversal!)
-const RUINS_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  VALUES ?instance {
-    wd:Q839954   # archaeological site
-    wd:Q141400   # ruins
-    wd:Q10969    # ruin
-    wd:Q1194611  # ruined city
-    wd:Q2354482  # ancient city
-    wd:Q15893266 # former settlement
-    wd:Q56061    # abandoned city
-    wd:Q1060829  # ancient settlement
-    wd:Q3812007  # deserted village
-    wd:Q9259     # UNESCO World Heritage Site
-    wd:Q174782   # historical monument
-  }
-
-  ?place wdt:P31 ?instance.
->>>>>>> Stashed changes
   ?place wdt:P625 ?coord.
   ${continentQid ? `
   ?place wdt:P17 ?country.
   ?country wdt:P30 wd:${continentQid}.
-  ` : ''}
+  ` : `
+  OPTIONAL { ?place wdt:P17 ?country. }
+  `}
 
   OPTIONAL { ?place wdt:P571 ?inception. }
   OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
@@ -508,179 +63,16 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
 ORDER BY ?placeLabel
-<<<<<<< Updated upstream
 LIMIT ${limit}
 `;
 
-// Asia wars & battles
-const WAR_ASIA_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 wd:Q48.                 # Asia
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Americas wars & battles (North & South America)
-const WAR_AMERICAS_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 ?continent.
-  VALUES ?continent { wd:Q49 wd:Q18 }        # North & South America
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// ROW wars & battles (Africa & Oceania)
-const WAR_ROW_SPARQL_QUERY = `
-SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
-                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
-  {
-    ?place wdt:P31/wdt:P279* wd:Q650711.   # battle
-    BIND(wd:Q650711 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q178561.   # battlefield
-    BIND(wd:Q178561 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q180684.   # military conflict
-    BIND(wd:Q180684 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q831663.   # military campaign
-    BIND(wd:Q831663 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q645883.   # military operation
-    BIND(wd:Q645883 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q157570.   # military cemetery
-    BIND(wd:Q157570 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q1785071.  # war memorial
-    BIND(wd:Q1785071 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q3679228.  # fortification
-    BIND(wd:Q3679228 AS ?instance)
-  } UNION {
-    ?place wdt:P31/wdt:P279* wd:Q44613.    # nuclear test site
-    BIND(wd:Q44613 AS ?instance)
-  }
-
-  ?place wdt:P625 ?coord.
-  ?place wdt:P17 ?country.
-  ?country wdt:P30 ?continent.
-  VALUES ?continent { wd:Q15 wd:Q666 }       # Africa & Oceania
-
-  OPTIONAL { ?place wdt:P571 ?inception. }
-  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
-  OPTIONAL { ?place wdt:P585 ?point_in_time. }
-  OPTIONAL { ?place wdt:P580 ?start_time. }
-  OPTIONAL { ?place wdt:P18 ?image. }
-  OPTIONAL {
-    ?article schema:about ?place;
-             schema:isPartOf <https://en.wikipedia.org/>.
-  }
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY ?placeLabel
-LIMIT 2000
-`;
-
-// Architecture & Heritage Query — flat direct lookup (no recursive traversal!)
-const ARCHITECTURE_SPARQL_QUERY = `
+const buildRuinsSparqlQuery = ({ continentQid, limit = 250 } = {}) => `
 SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
                 ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
   VALUES ?instance {
     wd:Q839954   # archaeological site
-    wd:Q141400   # archaeological remnant
-    wd:Q10969    # ruined structure
+    wd:Q141400   # ruins
+    wd:Q10969    # ruin
     wd:Q1194611  # ruined city
     wd:Q2354482  # ancient city
     wd:Q15893266 # former settlement
@@ -693,12 +85,12 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
 
   ?place wdt:P31 ?instance.
   ?place wdt:P625 ?coord.
-
   ${continentQid ? `
-  # Prefer continent coverage via country → continent
   ?place wdt:P17 ?country.
   ?country wdt:P30 wd:${continentQid}.
-  ` : ''}
+  ` : `
+  OPTIONAL { ?place wdt:P17 ?country. }
+  `}
 
   OPTIONAL { ?place wdt:P571 ?inception. }
   OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
@@ -713,14 +105,52 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
 ORDER BY ?placeLabel
-=======
->>>>>>> Stashed changes
-LIMIT 2000
-=======
->>>>>>> Stashed changes
+LIMIT ${limit}
 `;
 
-const CULTURAL_SPARQL_QUERY = `
+const buildArchitectureSparqlQuery = ({ continentQid, limit = 500 } = {}) => `
+SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
+                ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
+  VALUES ?instance {
+    wd:Q839954
+    wd:Q141400
+    wd:Q10969
+    wd:Q1194611
+    wd:Q2354482
+    wd:Q15893266
+    wd:Q56061
+    wd:Q1060829
+    wd:Q3812007
+    wd:Q9259
+    wd:Q174782
+  }
+
+  ?place wdt:P31 ?instance.
+  ?place wdt:P625 ?coord.
+  ${continentQid ? `
+  ?place wdt:P17 ?country.
+  ?country wdt:P30 wd:${continentQid}.
+  ` : `
+  OPTIONAL { ?place wdt:P17 ?country. }
+  `}
+
+  OPTIONAL { ?place wdt:P571 ?inception. }
+  OPTIONAL { ?place wdt:P1619 ?date_of_opening. }
+  OPTIONAL { ?place wdt:P585 ?point_in_time. }
+  OPTIONAL { ?place wdt:P580 ?start_time. }
+  OPTIONAL { ?place wdt:P18 ?image. }
+  OPTIONAL {
+    ?article schema:about ?place;
+             schema:isPartOf <https://en.wikipedia.org/>.
+  }
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+ORDER BY ?placeLabel
+LIMIT ${limit}
+`;
+
+const buildCulturalSparqlQuery = ({ limit = 2000 } = {}) => `
 SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
                 ?inception ?date_of_opening ?point_in_time ?start_time WHERE {
 
@@ -756,53 +186,35 @@ SELECT DISTINCT ?place ?placeLabel ?coord ?instance ?article ?image
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
 ORDER BY ?placeLabel
-LIMIT 2000
+LIMIT ${limit}
 `;
 
 const mapCategory = (instanceId) => {
   const mapping = {
     // War
-    'Q650711':  'war',  // battle
-    'Q178561':  'war',  // battlefield
-    'Q180684':  'war',  // military conflict
-    'Q198':     'war',  // war (WWI, WWII)
-    'Q831663':  'war',  // military campaign
-    'Q645883':  'war',  // military operation
-    'Q157570':  'war',  // military cemetery
-    'Q1785071': 'war',  // war memorial
-    'Q3679228': 'war',  // fortification
-    'Q44613':   'war',  // nuclear test site
+    'Q650711':  'war',
+    'Q178561':  'war',
+    'Q180684':  'war',
+    'Q198':     'war',
+    'Q831663':  'war',
+    'Q645883':  'war',
+    'Q157570':  'war',
+    'Q1785071': 'war',
+    'Q3679228': 'war',
+    'Q44613':   'war',
 
-<<<<<<< Updated upstream
-    // Architecture & heritage
-    'Q839954':   'architecture',  // archaeological site
-    'Q141400':   'architecture',  // archaeological remnant
-    'Q10969':    'architecture',  // ruined structure
-    'Q1194611':  'architecture',  // ruined city
-    'Q2354482':  'architecture',  // ancient city
-    'Q15893266': 'architecture',  // former settlement
-    'Q56061':    'architecture',  // abandoned city
-    'Q1060829':  'architecture',  // ancient settlement
-    'Q3812007':  'architecture',  // deserted village
-    'Q9259':     'architecture',  // UNESCO World Heritage Site
-    'Q174782':   'architecture',  // historical monument
-=======
-    // Ruins
-    'Q839954':   'ruins',  // archaeological site
-    'Q141400':   'ruins',  // ruins
-    'Q10969':    'ruins',  // ruin
-    'Q1194611':  'ruins',  // ruined city
-    'Q2354482':  'ruins',  // ancient city
-    'Q15893266': 'ruins',  // former settlement
-    'Q56061':    'ruins',  // abandoned city
-    'Q1060829':  'ruins',  // ancient settlement
-    'Q3812007':  'ruins',  // deserted village
-    'Q9259':     'ruins',  // UNESCO World Heritage Site
-    'Q174782':   'ruins',  // historical monument
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+    // Architecture / Ruins -> map to 'architecture'
+    'Q839954':   'architecture',
+    'Q141400':   'architecture',
+    'Q10969':    'architecture',
+    'Q1194611':  'architecture',
+    'Q2354482':  'architecture',
+    'Q15893266': 'architecture',
+    'Q56061':    'architecture',
+    'Q1060829':  'architecture',
+    'Q3812007':  'architecture',
+    'Q9259':     'architecture',
+    'Q174782':   'architecture',
 
     // Religion
     'Q44539': 'religion',
@@ -818,7 +230,7 @@ const mapCategory = (instanceId) => {
     'Q23442':  'culture',
     'Q5351':   'culture',
 
-    // Architecture
+    // Architecture extras
     'Q8119':  'architecture',
     'Q80707': 'architecture',
     'Q12280': 'architecture',
@@ -837,7 +249,7 @@ const mapEra = (year) => {
 
 const parseYear = (dateStr) => {
   if (!dateStr) return null;
-  const match = dateStr.match(/(-?\d{1,4})/);
+  const match = dateStr.match(/(-?\\d{1,4})/);
   if (match) return parseInt(match[1]);
   return null;
 };
@@ -853,28 +265,25 @@ const fetchWikipediaDescription = async (title) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// FIX 4: Run BOTH queries and merge results
-// ─────────────────────────────────────────────
 const runSparqlQuery = async (query, label) => {
   console.log(`Running SPARQL query: ${label}...`);
   try {
     const response = await axios.get(WIKIDATA_SPARQL_URL, {
       params: { query, format: 'json' },
       headers: {
-        'User-Agent': 'EpochaHistoryApp/1.0 (yourname@example.com)',
+        'User-Agent': 'EpochaHistoryApp/1.0 (contact@epocha.local)',
         'Accept': 'application/sparql-results+json',
       },
-      timeout: 60000, // FIX 5: Increased timeout to 60s (was 30s)
+      timeout: 60000,
     });
 
     return response.data.results.bindings.map(item => {
-      const coordMatch = item.coord.value.match(/Point\(([-\d.]+) ([-\d.]+)\)/);
+      const coordMatch = item.coord?.value?.match(/Point\(([-\\d.]+) ([-\\d.]+)\)/);
       const lng = coordMatch ? parseFloat(coordMatch[1]) : 0;
       const lat = coordMatch ? parseFloat(coordMatch[2]) : 0;
 
       const wikidataId   = item.place.value.split('/').pop();
-      const instanceId   = item.instance.value.split('/').pop();
+      const instanceId   = item.instance?.value?.split('/').pop();
 
       const rawDate =
         item.inception?.value ||
@@ -903,14 +312,12 @@ const runSparqlQuery = async (query, label) => {
       };
     });
   } catch (error) {
-    console.error(`Error in query [${label}]:`, error.message);
+    console.error(`Error in query [${label}]:`, error.message || error);
     return [];
   }
 };
 
 const fetchHistoricalPlaces = async () => {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   const continents = [
     { qid: 'Q46', label: 'Europe' },
     { qid: 'Q48', label: 'Asia' },
@@ -937,58 +344,27 @@ const fetchHistoricalPlaces = async () => {
   );
 
   const warPlaces = [...warByContinent, ...warFallback];
-  const architecturePlaces = await runSparqlQuery(
-    ARCHITECTURE_SPARQL_QUERY,
-    'Architecture & Heritage'
-  );
 
-  // Cultural/Heritage (single query)
-  const culturalPlaces = await runSparqlQuery(CULTURAL_SPARQL_QUERY, 'Cultural & Heritage');
+  const architecturePlaces = await Promise.all(
+    continents.map(c =>
+      runSparqlQuery(buildArchitectureSparqlQuery({ continentQid: c.qid, limit: 500 }), `Architecture (${c.label})`)
+    )
+  ).then(arrs => arrs.flat());
 
-=======
-=======
->>>>>>> Stashed changes
-  const [
-    warEurope,
-    warAsia,
-    warAmericas,
-    warRow,
-    ruinsPlaces,
-    culturalPlaces
-  ] = await Promise.all([
-    runSparqlQuery(WAR_EUROPE_SPARQL_QUERY,   'Europe Wars & Battles'),
-    runSparqlQuery(WAR_ASIA_SPARQL_QUERY,     'Asia Wars & Battles'),
-    runSparqlQuery(WAR_AMERICAS_SPARQL_QUERY, 'Americas Wars & Battles'),
-    runSparqlQuery(WAR_ROW_SPARQL_QUERY,      'ROW Wars & Battles'),
-    runSparqlQuery(RUINS_SPARQL_QUERY,        'Ruins & Ancient Sites'),
-    runSparqlQuery(CULTURAL_SPARQL_QUERY,     'Cultural & Heritage'),
-  ]);
+  const culturalPlaces = await runSparqlQuery(buildCulturalSparqlQuery({ limit: 2000 }), 'Cultural & Heritage');
 
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+  const ruinsPlaces = await Promise.all(
+    continents.map(c => runSparqlQuery(buildRuinsSparqlQuery({ continentQid: c.qid, limit: 500 }), `Ruins (${c.label})`))
+  ).then(arrs => arrs.flat());
+
   const seen   = new Set();
   const merged = [];
 
   const allPlaces = [
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     ...warPlaces,
     ...architecturePlaces,
-=======
-=======
->>>>>>> Stashed changes
-    ...warEurope,
-    ...warAsia,
-    ...warAmericas,
-    ...warRow,
     ...ruinsPlaces,
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-    ...culturalPlaces
+    ...culturalPlaces,
   ];
 
   for (const place of allPlaces) {
@@ -998,22 +374,9 @@ const fetchHistoricalPlaces = async () => {
     }
   }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   console.log(`War places:          ${warPlaces.length}`);
   console.log(`Architecture places: ${architecturePlaces.length}`);
-=======
-=======
->>>>>>> Stashed changes
-  console.log(`Europe war places:   ${warEurope.length}`);
-  console.log(`Asia war places:     ${warAsia.length}`);
-  console.log(`Americas war places: ${warAmericas.length}`);
-  console.log(`ROW war places:      ${warRow.length}`);
   console.log(`Ruins places:        ${ruinsPlaces.length}`);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   console.log(`Cultural places:     ${culturalPlaces.length}`);
   console.log(`Total unique:        ${merged.length}`);
 
@@ -1042,7 +405,7 @@ const seedDatabase = async () => {
         console.log(`  Progress: ${count}/${places.length} seeded...`);
       }
     } catch (error) {
-      console.error(`Failed to upsert [${place.name}]:`, error.message);
+      console.error(`Failed to upsert [${place.name}]:`, error.message || error);
     }
   }
 
